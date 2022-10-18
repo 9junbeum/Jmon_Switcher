@@ -1,0 +1,17 @@
+﻿<UserControl x:Class="Jmon_Switcher._3state_toggle_button"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Jmon_Switcher"
+             mc:Ignorable="d" Width="100">
+    <Grid>
+        <Border CornerRadius="10" BorderBrush="AliceBlue">
+            <UniformGrid Rows="1">
+                <Button x:Name="on_btn" Content="on" Padding="0" Click="Audio_On_Btn_Click" Background="Gray"/>
+                <Button x:Name="off_btn" Content="off" Padding="0" Click="Audio_Off_Btn_Click" Background="Gray"/>
+                <Button x:Name="afv_btn" Content="AFV" Padding="0" Click="Audio_AFV_Btn_Click" Background="Gray"/>
+            </UniformGrid>
+        </Border>
+    </Grid>
+</UserControl>

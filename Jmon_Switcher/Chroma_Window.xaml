@@ -1,0 +1,17 @@
+﻿<Window x:Class="Jmon_Switcher.Chroma_Window"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Jmon_Switcher"
+        mc:Ignorable="d"
+        WindowStyle="None" WindowStartupLocation="Manual"
+        Loaded="Window_Loaded">
+    
+    <Grid>
+        <Canvas x:Name="chroma_fullscreen" Background="White">
+            <TextBox x:Name="chroma_Caption" Width="{Binding ElementName=chroma_fullscreen, Path=ActualWidth}" Height="{Binding ElementName=chroma_fullscreen, Path=ActualHeight}" 
+                     IsReadOnly="True" VerticalAlignment="Bottom" TextAlignment="Center"/>
+        </Canvas>
+    </Grid>
+</Window>
