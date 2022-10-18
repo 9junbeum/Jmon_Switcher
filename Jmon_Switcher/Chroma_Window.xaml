@@ -11,7 +11,7 @@
     <Grid>
         <Canvas x:Name="chroma_fullscreen" Background="White">
             <TextBox x:Name="chroma_Caption" Width="{Binding ElementName=chroma_fullscreen, Path=ActualWidth}" Height="{Binding ElementName=chroma_fullscreen, Path=ActualHeight}" 
-                     IsReadOnly="True" VerticalAlignment="Bottom" TextAlignment="Center"/>
+                     IsReadOnly="True" VerticalAlignment="Center" TextAlignment="Center" Text="Chroma 설정 적용시 이 화면에 표시됩니다." FontSize="20"/>
         </Canvas>
     </Grid>
 </Window>

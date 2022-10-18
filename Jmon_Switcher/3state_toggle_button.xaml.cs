@@ -59,5 +59,18 @@ namespace Jmon_Switcher
             afv_btn.Background = Brushes.LightCoral;
         }
 
+        public void Set_Btn_enable()
+        {
+            on_btn.IsEnabled = true;
+            off_btn.IsEnabled = true;
+            afv_btn.IsEnabled = true;
+        }
+        public void Set_Btn_disable()
+        {
+            on_btn.IsEnabled = false;
+            off_btn.IsEnabled = false;
+            afv_btn.IsEnabled = false;
+        }
+
     }
 }

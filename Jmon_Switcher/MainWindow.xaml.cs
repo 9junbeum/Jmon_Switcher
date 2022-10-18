@@ -32,9 +32,6 @@ namespace Jmon_Switcher
         private IBMDSwitcherKey m_switcher_key;                     //ATEM 크로마키 담당.
         private IBMDSwitcherKeyChromaParameters m_chromaParameters; //ATEM 크로마키에서 Hue,Gain 등 파라미터 담당.
 
-        private IBMDSwitcherKeyFlyParameters m_flyParameters;       //? 필요없는듯.
-        private IBMDSwitcherKeyDVEParameters m_dVEParameters;       //? 필요없는듯.
-
         private IBMDSwitcherAudioMixer m_audioMixer;                                    //오디오 믹서 - out
         private IBMDSwitcherAudioInput m_audioInput;                                    //오디오 gain, balance - cam
         private IBMDSwitcherAudioMonitorOutput m_audioMonitorOutput;                    //? 필요없는듯.
@@ -43,12 +40,13 @@ namespace Jmon_Switcher
 
         private SwitcherMonitor m_switcherMonitor;
         private MixEffectBlockMonitor m_mixEffectBlockMonitor;
-        private ChromaMonitor m_chromaMonitor;                                  
+        private ChromaMonitor m_chromaMonitor;
+
         private List<InputMonitor> m_inputMonitors = new List<InputMonitor>();  //Callback을 관리함.
         private string Switcher_IP = "192.168.21.199";
 
 
-        Chroma_Window cw ;
+        
 
         public enum _ATEM_TRAN_TYPE_ : int
         {
@@ -64,6 +62,7 @@ namespace Jmon_Switcher
             eATT_TopRight,
             eATT_Max
         }        //transition enum
+        Chroma_Window cw = new Chroma_Window(); //크로마키 보여줄 창 
         private bool m_moveSliderDownwards = false;
         private bool m_currentTransitionReachedHalfway = false;
 
@@ -97,7 +96,6 @@ namespace Jmon_Switcher
 
             SwitcherDisconnected();		// start with switcher disconnected
             Connect_Switcher();         // auto connect to switcher
-            InitKeyersData();
         }
 
         private void SwitcherDisconnected()
@@ -203,7 +201,6 @@ namespace Jmon_Switcher
 
             // We want to get the first Mix Effect block (ME 1). We create a ME iterator,
             // and then get the first one:
-            m_mixEffectBlock1 = null;
 
             IBMDSwitcherMixEffectBlockIterator meIterator = null;
             IntPtr meIteratorPtr;
@@ -214,8 +211,6 @@ namespace Jmon_Switcher
                 meIterator = (IBMDSwitcherMixEffectBlockIterator)Marshal.GetObjectForIUnknown(meIteratorPtr);
             }
 
-            if (meIterator == null)
-                return;
 
             if (meIterator != null)
             {
@@ -231,11 +226,11 @@ namespace Jmon_Switcher
             // Install MixEffectBlockMonitor callbacks:
             m_mixEffectBlock1.AddCallback(m_mixEffectBlockMonitor);
 
-            m_audioMixer = (IBMDSwitcherAudioMixer)m_switcher;
 
 
             //Audio Input iterator +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
 
+            m_audioMixer = (IBMDSwitcherAudioMixer)m_switcher;
             IntPtr AinIteratorPtr = IntPtr.Zero;
             Guid AinIteratorIID = typeof(IBMDSwitcherAudioInputIterator).GUID;
             m_audioMixer.CreateIterator(ref AinIteratorIID, out AinIteratorPtr);
@@ -268,6 +263,7 @@ namespace Jmon_Switcher
 
 
 
+            InitKeyersData();
 
             MixEffectBlockSetEnable(true);      //스위치에 연결되면, UI를 사용할 수 있도록 enable 해주는 함수.
             UpdatePopupItems();
@@ -305,12 +301,39 @@ namespace Jmon_Switcher
             prev_Btn_7.IsEnabled = enable;
             prev_Btn_8.IsEnabled = enable;
 
+            audio_Btn_1.Set_Btn_enable(); //위와 같은 기능
+            audio_Btn_2.Set_Btn_enable();
+            audio_Btn_3.Set_Btn_enable();
+            audio_Btn_4.Set_Btn_enable();
+            audio_Btn_5.Set_Btn_enable();
+            audio_Btn_6.Set_Btn_enable();
+            audio_Btn_7.Set_Btn_enable();
+            audio_Btn_8.Set_Btn_enable();
+
+            LR_Audio_balance_1.IsEnabled = enable;
+            LR_Audio_balance_2.IsEnabled = enable;
+            LR_Audio_balance_3.IsEnabled = enable;
+            LR_Audio_balance_4.IsEnabled = enable;
+            LR_Audio_balance_5.IsEnabled = enable;
+            LR_Audio_balance_6.IsEnabled = enable;
+            LR_Audio_balance_7.IsEnabled = enable;
+            LR_Audio_balance_8.IsEnabled = enable;
+
+            Volume_Audio_1.IsEnabled = enable;
+            Volume_Audio_2.IsEnabled = enable;
+            Volume_Audio_3.IsEnabled = enable;
+            Volume_Audio_4.IsEnabled = enable;
+            Volume_Audio_5.IsEnabled = enable;
+            Volume_Audio_6.IsEnabled = enable;
+            Volume_Audio_7.IsEnabled = enable;
+            Volume_Audio_8.IsEnabled = enable;
+
             buttonAuto.IsEnabled = enable;
             buttonCut.IsEnabled = enable;
             Slider_transition_bar.IsEnabled = enable;
 
             //다른 버튼들도 추가 해야함.
-        }
+        } //추가해야함.
         private void UpdatePopupItems()
         {
             // Clear the combo boxes:
@@ -768,6 +791,15 @@ namespace Jmon_Switcher
 
         #region chroma key function
 
+        public void ResetKeyersData()
+        {
+            if (m_chromaParameters != null)
+            {
+                m_chromaParameters = null;
+            }
+
+            m_switcher_key = null;
+        }//ok
         public int InitKeyersData()
         {
             int retVal = 0;
@@ -794,139 +826,81 @@ namespace Jmon_Switcher
                         m_switcher_key = key;
                         m_chromaParameters = key as IBMDSwitcherKeyChromaParameters;
                         m_chromaParameters.AddCallback(m_chromaMonitor);
-                        m_flyParameters = key as IBMDSwitcherKeyFlyParameters;
-                        m_dVEParameters = key as IBMDSwitcherKeyDVEParameters;
-                        long selecteditem; 
-                        m_switcher_key.GetInputFill(out selecteditem);
-                        chroma_key_combo.SelectedIndex = int.Parse(selecteditem.ToString());
-                        Update_Chroma_Slider_Value();
-                        Update_Chroma_Text_Value();
 
-                        cw = new Chroma_Window();
-                        cw.Show();
                         retVal = 1;
                     }
                 }
             }
-
+            if(retVal == 1)
+            {
+                //초기화 성공시
+                Update_Chroma_Input_source();
+                Update_Chroma_Text_Value();
+                Update_Chroma_Slider_Value();
+                Show_Chroma_output_source();
+            }
 
             return retVal;
         }  //ok
-
-        public void ResetKeyersData()
+        private void Update_Chroma_Input_source()
         {
-            if (m_chromaParameters != null)
-            {
-                m_chromaParameters = null;
-            }
-
-            if (m_flyParameters != null)
-            {
-                m_flyParameters = null;
-            }
-
-            if (m_dVEParameters != null)
-            {
-                m_dVEParameters = null;
-            }
-
-            m_switcher_key = null;
-        }//ok
-
-        int SetKeyersCharGenStatus(int mSts)
+            long selecteditem;
+            m_switcher_key.GetInputFill(out selecteditem);
+            chroma_key_combo.SelectedIndex = int.Parse(selecteditem.ToString());
+        } //ok
+        private void Update_Chroma_Text_Value()
         {
-            // mSts == 
-            int retVal = -1;
-            if (mSts == 0)
+            //현재 설정되어 있는 hue,gain,y-sup,lift 값을 가지고 와서 업데이트 함.
+            double Hue_;
+            double Gain_;
+            double YSup_;
+            double Lift_;
+
+            m_chromaParameters.GetHue(out Hue_);
+            m_chromaParameters.GetGain(out Gain_);
+            m_chromaParameters.GetYSuppress(out YSup_);
+            m_chromaParameters.GetLift(out Lift_);
+
+            Dispatcher.Invoke(() =>
             {
-                if (m_switcher_key != null)
-                {
-                    m_switcher_key.SetOnAir(0);
-                    retVal = mSts;
-                }
-            }
-            else if (mSts == 1)
-            {
-                if ((m_switcher_key != null) && (m_chromaParameters != null))
-                {
-                    m_switcher_key.SetType(_BMDSwitcherKeyType.bmdSwitcherKeyTypeChroma);
-                    m_switcher_key.SetInputFill(4);//hardcoded 4
-                    m_chromaParameters.SetHue(319.5);
-                    m_chromaParameters.SetGain(0.55);
-                    m_chromaParameters.SetYSuppress(0.43);
-                    m_chromaParameters.SetLift(0);
+                hueval.Text = Hue_.ToString();
+                gainval.Text = (Gain_ * 100 + "%").ToString();
+                ysupval.Text = (YSup_ * 100 + "%").ToString();
+                liftval.Text = (Lift_ * 100 + "%").ToString();
+            });
 
-                    m_switcher_key.SetOnAir(1);
-                    //CGlobalMain::GetGMain()->DVEPIP_ShowWindow(FALSE);
-                    retVal = mSts;
-                }
-            }
-            else if (mSts == 2)
-            {
-                if ((m_switcher_key != null) && (m_flyParameters != null))
-                {
-                    m_switcher_key.SetType(_BMDSwitcherKeyType.bmdSwitcherKeyTypeDVE);
-                    m_switcher_key.SetInputFill(4);
-                    double sizex, sizey = 0;
-                    m_flyParameters.GetSizeX(out sizex);
-                    m_flyParameters.GetSizeY(out sizey);
-                    m_flyParameters.SetSizeX(sizex);
-                    m_flyParameters.SetSizeY(sizey);
-                    double posix, posiy = 0;
-                    m_flyParameters.GetPositionX(out posix);
-                    m_flyParameters.GetPositionY(out posiy);
-
-                    m_flyParameters.SetPositionX(posix);
-                    m_flyParameters.SetPositionY(posiy);
-                    m_dVEParameters.SetBorderEnabled(0);
-                    m_switcher_key.SetOnAir(1);
-
-                    //CGlobalMain::GetGMain()->CharGen_ShowWindow(FALSE);
-                    retVal = mSts;
-                }
-            }
-            return retVal;
-        }
-
-        int SetKeyersOnAir(int mSts)
+        } //ok
+        private void Update_Chroma_Slider_Value()
         {
-            int retVal = 0;
+            //현재 설정되어 있는 hue,gain,y-sup,lift 값을 가지고 와서 업데이트 함.
+            double Hue_;
+            double Gain_;
+            double YSup_;
+            double Lift_;
 
-            if (m_switcher_key != null)
+            m_chromaParameters.GetHue(out Hue_);
+            m_chromaParameters.GetGain(out Gain_);
+            m_chromaParameters.GetYSuppress(out YSup_);
+            m_chromaParameters.GetLift(out Lift_);
+
+            hueslider.Value = Hue_;
+            gainslider.Value = Gain_;
+            ysupslider.Value = YSup_;
+            liftslider.Value = Lift_;
+
+            Dispatcher.Invoke(() =>
             {
-                bool isOnAir = !(mSts == 0);
-                if(isOnAir)
-                {
-                    m_switcher_key.SetOnAir(1);
-                }
-                else
-                {
-                    m_switcher_key.SetOnAir(0);
-                }
-                retVal = 1;
-                
-            }
 
-            return retVal;
-        }
 
-        int GetKeyersOnAir()
+            });
+            Console.WriteLine("slider_value_chane");
+        } //ok
+        private void Show_Chroma_output_source()
         {
-            int retVal = 0;
-
-            if (m_switcher_key != null)
-            {
-                int isOnAir = 0;
-                m_switcher_key.GetOnAir(out isOnAir);
-                if (isOnAir == 1)
-                {
-                    retVal = 1;
-                    
-                }
-            }
-
-            return retVal;
-        }
+            //기본 설정(적용 버튼을 누르면 이곳에 표시됩니다.)으로 크로마 윈도우 표시. 
+            cw.Set_Screen_Index(combo_screen_index_selector.SelectedIndex);
+            cw.Show();
+        } //ok 
 
 
         private void Chroma_Hue_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -1073,54 +1047,6 @@ namespace Jmon_Switcher
             Update_Chroma_Text_Value();
             Console.WriteLine("chroma_value_changed");
         } //ok
-        private void Update_Chroma_Text_Value()
-        {
-            //현재 설정되어 있는 hue,gain,y-sup,lift 값을 가지고 와서 업데이트 함.
-            double Hue_;
-            double Gain_;
-            double YSup_;
-            double Lift_;
-
-            m_chromaParameters.GetHue(out Hue_);
-            m_chromaParameters.GetGain(out Gain_);
-            m_chromaParameters.GetYSuppress(out YSup_);
-            m_chromaParameters.GetLift(out Lift_);
-
-            Dispatcher.Invoke(() =>
-            {
-                hueval.Text = Hue_.ToString();
-                gainval.Text = (Gain_ * 100 + "%").ToString();
-                ysupval.Text = (YSup_ * 100 + "%").ToString();
-                liftval.Text = (Lift_ * 100 + "%").ToString();
-            });
-
-        } //ok
-        private void Update_Chroma_Slider_Value()
-        {
-            //현재 설정되어 있는 hue,gain,y-sup,lift 값을 가지고 와서 업데이트 함.
-            double Hue_;
-            double Gain_;
-            double YSup_;
-            double Lift_;
-
-            m_chromaParameters.GetHue(out Hue_);
-            m_chromaParameters.GetGain(out Gain_);
-            m_chromaParameters.GetYSuppress(out YSup_);
-            m_chromaParameters.GetLift(out Lift_);
-
-            hueslider.Value = Hue_;
-            gainslider.Value = Gain_;
-            ysupslider.Value = YSup_;
-            liftslider.Value = Lift_;
-            
-            Dispatcher.Invoke(() =>
-            {
-             
-                
-            });
-            Console.WriteLine("slider_value_chane");
-        } //ok
-
 
         private void On_Air_Btn_Click(object sender, RoutedEventArgs e)
         {
