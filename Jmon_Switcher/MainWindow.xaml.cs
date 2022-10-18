@@ -102,7 +102,7 @@ namespace Jmon_Switcher
         {
             textBoxSwitcherName.Content = "";
 
-            MixEffectBlockSetEnable(false);
+            UI_SetEnable(false);
 
             // Remove all input monitors, remove callbacks
             foreach (InputMonitor inputMon in m_inputMonitors)
@@ -265,10 +265,8 @@ namespace Jmon_Switcher
 
             InitKeyersData();
 
-            MixEffectBlockSetEnable(true);      //스위치에 연결되면, UI를 사용할 수 있도록 enable 해주는 함수.
-            UpdatePopupItems();
-            UpdateTransitionFramesRemaining();
-            UpdateSliderPosition();
+            UI_SetEnable(true);      //스위치에 연결되면, UI를 사용할 수 있도록 enable 해주는 함수.
+            Update_UI_From_ATEM_Switcher();
         }
 
         private void OnInputLongNameChanged(object sender, object args)
@@ -278,7 +276,7 @@ namespace Jmon_Switcher
 
 
 
-        private void MixEffectBlockSetEnable(bool enable)
+        private void UI_SetEnable(bool enable)
         {
             //comboBoxProgramSel.IsEnabled = enable;
             //comboBoxPreviewSel.IsEnabled = enable;
@@ -334,6 +332,15 @@ namespace Jmon_Switcher
 
             //다른 버튼들도 추가 해야함.
         } //추가해야함.
+
+        private void Update_UI_From_ATEM_Switcher()
+        {
+            //UI의 모든것(keyers 빼고)을 업데이트 하는 것.
+            UpdatePopupItems();
+            UpdateTransitionFramesRemaining();
+            UpdateSliderPosition();
+
+        }
         private void UpdatePopupItems()
         {
             // Clear the combo boxes:
@@ -377,8 +384,8 @@ namespace Jmon_Switcher
         }
         private void UpdateProgramButtonSelection()
         {
+            //프로그램 버튼 
             long programId;
-
             m_mixEffectBlock1.GetProgramInput(out programId);
 
             // Select the program popup entry that matches the input id:
@@ -433,87 +440,6 @@ namespace Jmon_Switcher
 
             m_mixEffectBlock1.GetTransitionFramesRemaining(out framesRemaining);
         }
-
-        private void UpdateSliderPosition()
-        {
-            double transitionPos;
-
-            m_mixEffectBlock1.GetTransitionPosition(out transitionPos);
-
-            m_currentTransitionReachedHalfway = (transitionPos >= 0.50);
-
-            if (m_moveSliderDownwards)
-                Slider_transition_bar.Value = 100 - (int)(transitionPos * 100);
-            else
-                Slider_transition_bar.Value = (int)(transitionPos * 100);
-        } //ok
-
-        private void OnInTransitionChanged()
-        {
-            int inTransition;
-
-            m_mixEffectBlock1.GetInTransition(out inTransition);
-
-            if (inTransition == 0)
-            {
-                // Toggle the starting orientation of slider handle if a transition has passed through halfway
-                if (m_currentTransitionReachedHalfway)
-                {
-                    m_moveSliderDownwards = !m_moveSliderDownwards;
-                    UpdateSliderPosition();
-                }
-                m_currentTransitionReachedHalfway = false;
-            }
-        } //ok
-
-
-        private void SetProgramCurrentInput(int number)
-        {
-            long inputId = number;
-
-            if (m_mixEffectBlock1 != null)
-            {
-                m_mixEffectBlock1.SetProgramInput(inputId);
-            }
-        }
-
-        private void SetPreviewCurrentInput(int number)
-        {
-            long inputId = number;
-
-            if (m_mixEffectBlock1 != null)
-            {
-                m_mixEffectBlock1.SetPreviewInput(inputId);
-            }
-        }
-
-        private void buttonAuto_Click(object sender, EventArgs e)
-        {
-            if (m_mixEffectBlock1 != null)
-            {
-                m_mixEffectBlock1.PerformAutoTransition();
-            }
-        } //ok
-
-        private void buttonCut_Click(object sender, EventArgs e)
-        {
-            if (m_mixEffectBlock1 != null)
-            {
-                m_mixEffectBlock1.PerformCut();
-            }
-        } //ok
-
-        private void Slider_transition_bar_Scroll(object sender, System.Windows.Controls.Primitives.ScrollEventArgs e)
-        {
-            if (m_mixEffectBlock1 != null)
-            {
-                double position = Slider_transition_bar.Value / 100.0;
-                if (m_moveSliderDownwards)
-                    position = (100 - Slider_transition_bar.Value) / 100.0;
-
-                m_mixEffectBlock1.SetTransitionPosition(position);
-            }
-        } //ok
 
         /// <summary>
         /// Used for putting other object types into combo boxes.
@@ -684,6 +610,87 @@ namespace Jmon_Switcher
             SetTransitionPattern(tran_type);
         }
 
+        private void UpdateSliderPosition()
+        {
+            double transitionPos;
+
+            m_mixEffectBlock1.GetTransitionPosition(out transitionPos);
+
+            m_currentTransitionReachedHalfway = (transitionPos >= 0.50);
+
+            if (m_moveSliderDownwards)
+                Slider_transition_bar.Value = 100 - (int)(transitionPos * 100);
+            else
+                Slider_transition_bar.Value = (int)(transitionPos * 100);
+        } //ok
+
+        private void OnInTransitionChanged()
+        {
+            int inTransition;
+
+            m_mixEffectBlock1.GetInTransition(out inTransition);
+
+            if (inTransition == 0)
+            {
+                // Toggle the starting orientation of slider handle if a transition has passed through halfway
+                if (m_currentTransitionReachedHalfway)
+                {
+                    m_moveSliderDownwards = !m_moveSliderDownwards;
+                    UpdateSliderPosition();
+                }
+                m_currentTransitionReachedHalfway = false;
+            }
+        } //ok
+
+
+        private void SetProgramCurrentInput(int number)
+        {
+            long inputId = number;
+
+            if (m_mixEffectBlock1 != null)
+            {
+                m_mixEffectBlock1.SetProgramInput(inputId);
+            }
+        }
+
+        private void SetPreviewCurrentInput(int number)
+        {
+            long inputId = number;
+
+            if (m_mixEffectBlock1 != null)
+            {
+                m_mixEffectBlock1.SetPreviewInput(inputId);
+            }
+        }
+
+        private void buttonAuto_Click(object sender, EventArgs e)
+        {
+            if (m_mixEffectBlock1 != null)
+            {
+                m_mixEffectBlock1.PerformAutoTransition();
+            }
+        } //ok
+
+        private void buttonCut_Click(object sender, EventArgs e)
+        {
+            if (m_mixEffectBlock1 != null)
+            {
+                m_mixEffectBlock1.PerformCut();
+            }
+        } //ok
+
+        private void Slider_transition_bar_Scroll(object sender, System.Windows.Controls.Primitives.ScrollEventArgs e)
+        {
+            if (m_mixEffectBlock1 != null)
+            {
+                double position = Slider_transition_bar.Value / 100.0;
+                if (m_moveSliderDownwards)
+                    position = (100 - Slider_transition_bar.Value) / 100.0;
+
+                m_mixEffectBlock1.SetTransitionPosition(position);
+            }
+        } //ok
+
 
         #endregion
 
@@ -721,8 +728,6 @@ namespace Jmon_Switcher
             }
             return retVal;
         } //이거다 
-
-
         private void LR_Audio_balance_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             Slider slider = sender as Slider; 
@@ -745,13 +750,10 @@ namespace Jmon_Switcher
                 SetAudioInputGainByIndex(idx, gainval);
             }
         }
-
-
         private void EXT_Btn_Click(object sender, RoutedEventArgs e)
         {
             //외부 음향 조절
         }
-
         private void External_Gain_Slider_Value_Changed(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             Slider sld = sender as Slider;
@@ -770,7 +772,6 @@ namespace Jmon_Switcher
 
             m_audioInput.SetGain(gain);
         }
-
         private void OUT_Btn_Click(object sender, RoutedEventArgs e)
         {
             //마스터 음향 조절
