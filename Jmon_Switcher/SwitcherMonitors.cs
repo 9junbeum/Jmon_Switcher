@@ -119,14 +119,14 @@ namespace Jmon_Switcher
         }
     }
 
-    class ChromaMonitor : IBMDSwitcherKeyChromaParametersCallback
+    class ChromaParametersMonitor : IBMDSwitcherKeyChromaParametersCallback
     {
         public event SwitcherEventHandler ChromaHueChanged;
         public event SwitcherEventHandler ChromaGainChanged;
         public event SwitcherEventHandler ChromaYsupChanged;
         public event SwitcherEventHandler ChromaLiftChanged;
 
-        public ChromaMonitor()
+        public ChromaParametersMonitor()
         {
 
         }
@@ -156,12 +156,12 @@ namespace Jmon_Switcher
         }
     }
 
-    class KeyMonitor : IBMDSwitcherKeyCallback
+    class SwitcherKeyMonitor : IBMDSwitcherKeyCallback
     {
         public event SwitcherEventHandler KeyInputFillChanged;
         public event SwitcherEventHandler KeyOnAirChanged;
 
-        public KeyMonitor()
+        public SwitcherKeyMonitor()
         {
 
         }
@@ -208,33 +208,6 @@ namespace Jmon_Switcher
                 case _BMDSwitcherAudioInputEventType.bmdSwitcherAudioInputEventTypeBalanceChanged:
                     if (AudioInputBalanceChanged != null)
                         AudioInputBalanceChanged(this, null);
-                    break;
-
-            }
-        }
-    }
-
-    class AudioOutputMonitor : IBMDSwitcherAudioMonitorOutputCallback
-    {
-        public event SwitcherEventHandler AudioOutputGainChanged;
-
-        public AudioOutputMonitor()
-        {
-
-        }
-        void IBMDSwitcherAudioMonitorOutputCallback.LevelNotification(double left, double right, double peakLeft, double peakRight)
-        {
-
-        }
-
-
-        void IBMDSwitcherAudioMonitorOutputCallback.Notify(_BMDSwitcherAudioMonitorOutputEventType eventType)
-        {
-            switch (eventType)
-            {
-                case _BMDSwitcherAudioMonitorOutputEventType.bmdSwitcherAudioMonitorOutputEventTypeGainChanged:
-                    if (AudioOutputGainChanged != null)
-                        AudioOutputGainChanged(this, null);
                     break;
 
             }

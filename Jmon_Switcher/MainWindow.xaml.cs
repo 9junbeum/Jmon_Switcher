@@ -28,7 +28,7 @@ namespace Jmon_Switcher
         private IBMDSwitcherDiscovery m_switcherDiscovery;          //ATEM 연결을 위해 장비 찾는 것.
 
         private IBMDSwitcher m_switcher;                            //ATEM 스위쳐 장비 그 자체.
-        private IBMDSwitcherMixEffectBlock m_mixEffectBlock1;       //ATEM 화면 입,출력 + 화면전환.
+        private IBMDSwitcherMixEffectBlock m_mixEffectBlock;       //ATEM 화면 입,출력 + 화면전환.
         private IBMDSwitcherKey m_switcher_key;                     //ATEM 크로마키 담당.
         private IBMDSwitcherKeyChromaParameters m_chromaParameters; //ATEM 크로마키에서 Hue,Gain 등 파라미터 담당.
 
@@ -40,10 +40,10 @@ namespace Jmon_Switcher
 
         private SwitcherMonitor m_switcherMonitor;
         private MixEffectBlockMonitor m_mixEffectBlockMonitor;
-        private ChromaMonitor m_chromaMonitor;
-        private KeyMonitor m_keyMonitor;
+        private SwitcherKeyMonitor m_switcherKeyMonitor;
+        private ChromaParametersMonitor m_chromaParametersMonitor;
+
         private AudioInputMonitor m_audioinputMonitor;
-        private AudioOutputMonitor m_audiooutputMonitor;
 
         private List<InputMonitor> m_inputMonitors = new List<InputMonitor>();  //Callback을 관리함.
         private string Switcher_IP = "192.168.21.199";
@@ -101,12 +101,16 @@ namespace Jmon_Switcher
             m_mixEffectBlockMonitor.TransitionPositionChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => UpdateSliderPosition())));
             m_mixEffectBlockMonitor.InTransitionChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => OnInTransitionChanged())));
 
-            m_chromaMonitor = new ChromaMonitor();
+            m_chromaParametersMonitor = new ChromaParametersMonitor();
 
-            m_chromaMonitor.ChromaHueChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => Chroma_Hue_Changed_Callback())));  //크로마키 Hue 가 변경되면,
-            m_chromaMonitor.ChromaGainChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => Chroma_Gain_Changed_Callback())));//크로마키 Gain 이 변경되면,
-            m_chromaMonitor.ChromaYsupChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => Chroma_Ysup_Changed_Callback())));//크로마키 Ysup 가 변경되면,
-            m_chromaMonitor.ChromaLiftChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => Chroma_Lift_Changed_Callback())));//크로마키 Lift 가 변경되면
+            m_chromaParametersMonitor.ChromaHueChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => Chroma_Hue_Changed_Callback())));  //크로마키 Hue 가 변경되면,
+            m_chromaParametersMonitor.ChromaGainChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => Chroma_Gain_Changed_Callback())));//크로마키 Gain 이 변경되면,
+            m_chromaParametersMonitor.ChromaYsupChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => Chroma_Ysup_Changed_Callback())));//크로마키 Ysup 가 변경되면,
+            m_chromaParametersMonitor.ChromaLiftChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => Chroma_Lift_Changed_Callback())));//크로마키 Lift 가 변경되면
+
+            m_audioinputMonitor = new AudioInputMonitor();
+            m_audioinputMonitor.AudioInputGainChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => Update_Audio_Input_Gain_Callback())));     //오디오 입력 gain 변경시,
+            m_audioinputMonitor.AudioInputBalanceChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => Update_Audio_Input_Balance_Callback())));  //오디오 입력 balance 변경시,
 
             //ATEM 스위치 연결
             m_switcherDiscovery = new CBMDSwitcherDiscovery();
@@ -134,13 +138,13 @@ namespace Jmon_Switcher
             }
             m_inputMonitors.Clear();
 
-            if (m_mixEffectBlock1 != null)
+            if (m_mixEffectBlock != null)
             {
                 // Remove callback
-                m_mixEffectBlock1.RemoveCallback(m_mixEffectBlockMonitor);
+                m_mixEffectBlock.RemoveCallback(m_mixEffectBlockMonitor);
 
                 // Release reference
-                m_mixEffectBlock1 = null;
+                m_mixEffectBlock = null;
             }
 
             if (m_switcher != null)
@@ -150,6 +154,15 @@ namespace Jmon_Switcher
 
                 // release reference:
                 m_switcher = null;
+            }
+
+            if (m_chromaParameters != null)
+            {
+                // Remove callback:
+                m_chromaParameters.RemoveCallback(m_chromaParametersMonitor);
+
+                // release reference:
+                m_chromaParameters = null;
             }
         }
         private void Connect_Switcher()
@@ -237,17 +250,17 @@ namespace Jmon_Switcher
 
             if (meIterator != null)
             {
-                meIterator.Next(out m_mixEffectBlock1);
+                meIterator.Next(out m_mixEffectBlock);
             }
 
-            if (m_mixEffectBlock1 == null)
+            if (m_mixEffectBlock == null)
             {
                 MessageBox.Show("Unexpected: Could not get first mix effect block", "Error");
                 return;
             }
 
             // Install MixEffectBlockMonitor callbacks:
-            m_mixEffectBlock1.AddCallback(m_mixEffectBlockMonitor);
+            m_mixEffectBlock.AddCallback(m_mixEffectBlockMonitor);
 
 
 
@@ -281,7 +294,7 @@ namespace Jmon_Switcher
             {
                 m_audioOutputIterator.Next(out m_audioMonitorOutput);
             }
-            m_audioMonitorOutput.AddCallback(m_audiooutputMonitor);
+            //m_audioMonitorOutput.AddCallback(m_audiooutputMonitor);
 
 
 
@@ -374,7 +387,7 @@ namespace Jmon_Switcher
         {
             //프로그램 버튼 
             long programId;
-            m_mixEffectBlock1.GetProgramInput(out programId);
+            m_mixEffectBlock.GetProgramInput(out programId);
 
             // Select the program popup entry that matches the input id:
 
@@ -401,7 +414,7 @@ namespace Jmon_Switcher
         {
             long previewId;
 
-            m_mixEffectBlock1.GetPreviewInput(out previewId);
+            m_mixEffectBlock.GetPreviewInput(out previewId);
 
             // Select the program popup entry that matches the input id:
 
@@ -482,8 +495,8 @@ namespace Jmon_Switcher
         public int GetTransitionPattern() //현재 transitionpattern을 반환
         {
             int retVal = (int)_ATEM_TRAN_TYPE_.eATT_Mix;
-            IBMDSwitcherTransitionParameters param = m_mixEffectBlock1 as IBMDSwitcherTransitionParameters;
-            IBMDSwitcherTransitionWipeParameters wipeparam = (IBMDSwitcherTransitionWipeParameters)m_mixEffectBlock1;
+            IBMDSwitcherTransitionParameters param = m_mixEffectBlock as IBMDSwitcherTransitionParameters;
+            IBMDSwitcherTransitionWipeParameters wipeparam = (IBMDSwitcherTransitionWipeParameters)m_mixEffectBlock;
             if (param != null)
             {
                 _BMDSwitcherTransitionStyle mSTS;
@@ -530,8 +543,8 @@ namespace Jmon_Switcher
         public void SetTransitionPattern(int PatternVal)
         {
 
-            IBMDSwitcherTransitionParameters param = m_mixEffectBlock1 as IBMDSwitcherTransitionParameters;
-            IBMDSwitcherTransitionWipeParameters wipeparam = (IBMDSwitcherTransitionWipeParameters)m_mixEffectBlock1;
+            IBMDSwitcherTransitionParameters param = m_mixEffectBlock as IBMDSwitcherTransitionParameters;
+            IBMDSwitcherTransitionWipeParameters wipeparam = (IBMDSwitcherTransitionWipeParameters)m_mixEffectBlock;
             
             if ((PatternVal < 11)&&((int)_ATEM_TRAN_TYPE_.eATT_Mix <= PatternVal))
             {
@@ -581,7 +594,7 @@ namespace Jmon_Switcher
         {
             double transitionPos;
 
-            m_mixEffectBlock1.GetTransitionPosition(out transitionPos);
+            m_mixEffectBlock.GetTransitionPosition(out transitionPos);
 
             m_currentTransitionReachedHalfway = (transitionPos >= 0.50);
 
@@ -595,7 +608,7 @@ namespace Jmon_Switcher
         {
             int inTransition;
 
-            m_mixEffectBlock1.GetInTransition(out inTransition);
+            m_mixEffectBlock.GetInTransition(out inTransition);
 
             if (inTransition == 0)
             {
@@ -614,9 +627,9 @@ namespace Jmon_Switcher
         {
             long inputId = number;
 
-            if (m_mixEffectBlock1 != null)
+            if (m_mixEffectBlock != null)
             {
-                m_mixEffectBlock1.SetProgramInput(inputId);
+                m_mixEffectBlock.SetProgramInput(inputId);
             }
         }
 
@@ -624,37 +637,37 @@ namespace Jmon_Switcher
         {
             long inputId = number;
 
-            if (m_mixEffectBlock1 != null)
+            if (m_mixEffectBlock != null)
             {
-                m_mixEffectBlock1.SetPreviewInput(inputId);
+                m_mixEffectBlock.SetPreviewInput(inputId);
             }
         }
 
         private void buttonAuto_Click(object sender, EventArgs e)
         {
-            if (m_mixEffectBlock1 != null)
+            if (m_mixEffectBlock != null)
             {
-                m_mixEffectBlock1.PerformAutoTransition();
+                m_mixEffectBlock.PerformAutoTransition();
             }
         } //ok
 
         private void buttonCut_Click(object sender, EventArgs e)
         {
-            if (m_mixEffectBlock1 != null)
+            if (m_mixEffectBlock != null)
             {
-                m_mixEffectBlock1.PerformCut();
+                m_mixEffectBlock.PerformCut();
             }
         } //ok
 
         private void Slider_transition_bar_Scroll(object sender, System.Windows.Controls.Primitives.ScrollEventArgs e)
         {
-            if (m_mixEffectBlock1 != null)
+            if (m_mixEffectBlock != null)
             {
                 double position = Slider_transition_bar.Value / 100.0;
                 if (m_moveSliderDownwards)
                     position = (100 - Slider_transition_bar.Value) / 100.0;
 
-                m_mixEffectBlock1.SetTransitionPosition(position);
+                m_mixEffectBlock.SetTransitionPosition(position);
             }
         } //ok
 
@@ -754,6 +767,14 @@ namespace Jmon_Switcher
             }
             m_audioMixer.SetProgramOutGain(gain);
         }
+        private void Update_Audio_Input_Gain_Callback()
+        {
+            Console.WriteLine("dd");
+        }
+        private void Update_Audio_Input_Balance_Callback()
+        {
+            Console.WriteLine("dd");
+        }
 
         #endregion
 
@@ -779,7 +800,7 @@ namespace Jmon_Switcher
 
                 IntPtr pSwitcherKeyIteratorPtr;
                 Guid iid = typeof(IBMDSwitcherKeyIterator).GUID;
-                m_mixEffectBlock1.CreateIterator(ref iid, out pSwitcherKeyIteratorPtr);
+                m_mixEffectBlock.CreateIterator(ref iid, out pSwitcherKeyIteratorPtr);
                 
                 if(pSwitcherKeyIteratorPtr != null)
                 {
@@ -792,14 +813,14 @@ namespace Jmon_Switcher
                     if(key != null)
                     {
                         m_switcher_key = key;
-                        m_keyMonitor = new KeyMonitor();
-                        m_switcher_key.AddCallback(m_keyMonitor);
-                        m_keyMonitor.KeyOnAirChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => Key_OnAirChanged_Callback())));
-                        m_keyMonitor.KeyInputFillChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => Key_InputFillChanged_Callback())));
+                        m_switcherKeyMonitor = new SwitcherKeyMonitor();
+                        m_switcher_key.AddCallback(m_switcherKeyMonitor);
+                        m_switcherKeyMonitor.KeyOnAirChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => Key_OnAirChanged_Callback())));
+                        m_switcherKeyMonitor.KeyInputFillChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => Key_InputFillChanged_Callback())));
 
 
                         m_chromaParameters = key as IBMDSwitcherKeyChromaParameters;
-                        m_chromaParameters.AddCallback(m_chromaMonitor);
+                        m_chromaParameters.AddCallback(m_chromaParametersMonitor);
 
                         retVal = 1;
                     }
