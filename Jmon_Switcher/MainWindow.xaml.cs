@@ -35,8 +35,6 @@ namespace Jmon_Switcher
         private IBMDSwitcherAudioMixer m_audioMixer;                                    //오디오 믹서 - out
         private IBMDSwitcherAudioInput m_audioInput;                                    //오디오 gain, balance - cam
         private IBMDSwitcherAudioMonitorOutput m_audioMonitorOutput;                    //? 필요없는듯.
-        private IBMDSwitcherAudioInputIterator m_audioInputiterator = null;
-        private IBMDSwitcherAudioMonitorOutputIterator m_audioOutputIterator = null;
 
         private SwitcherMonitor m_switcherMonitor;
         private MixEffectBlockMonitor m_mixEffectBlockMonitor;
@@ -49,7 +47,10 @@ namespace Jmon_Switcher
         private string Switcher_IP = "192.168.21.199";
 
 
-
+        private IBMDSwitcherInputIterator inputIterator = null;
+        private IBMDSwitcherMixEffectBlockIterator meIterator = null;
+        private IBMDSwitcherAudioInputIterator m_audioInputiterator = null;
+        private IBMDSwitcherAudioMonitorOutputIterator m_audioOutputIterator = null;
 
         struct StringObjectPair<T>
         {
@@ -138,15 +139,6 @@ namespace Jmon_Switcher
             }
             m_inputMonitors.Clear();
 
-            if (m_mixEffectBlock != null)
-            {
-                // Remove callback
-                m_mixEffectBlock.RemoveCallback(m_mixEffectBlockMonitor);
-
-                // Release reference
-                m_mixEffectBlock = null;
-            }
-
             if (m_switcher != null)
             {
                 // Remove callback:
@@ -154,6 +146,15 @@ namespace Jmon_Switcher
 
                 // release reference:
                 m_switcher = null;
+            }
+
+            if (m_mixEffectBlock != null)
+            {
+                // Remove callback
+                m_mixEffectBlock.RemoveCallback(m_mixEffectBlockMonitor);
+
+                // Release reference
+                m_mixEffectBlock = null;
             }
 
             if (m_chromaParameters != null)
@@ -209,7 +210,6 @@ namespace Jmon_Switcher
             // This will allow us to update the combo boxes when input names change:
 
 
-            IBMDSwitcherInputIterator inputIterator = null;
             IntPtr inputIteratorPtr;
             Guid inputIteratorIID = typeof(IBMDSwitcherInputIterator).GUID;
             m_switcher.CreateIterator(ref inputIteratorIID, out inputIteratorPtr);
@@ -238,7 +238,6 @@ namespace Jmon_Switcher
             // We want to get the first Mix Effect block (ME 1). We create a ME iterator,
             // and then get the first one:
 
-            IBMDSwitcherMixEffectBlockIterator meIterator = null;
             IntPtr meIteratorPtr;
             Guid meIteratorIID = typeof(IBMDSwitcherMixEffectBlockIterator).GUID;
             m_switcher.CreateIterator(ref meIteratorIID, out meIteratorPtr);
@@ -251,6 +250,7 @@ namespace Jmon_Switcher
             if (meIterator != null)
             {
                 meIterator.Next(out m_mixEffectBlock);
+                
             }
 
             if (m_mixEffectBlock == null)
@@ -272,7 +272,7 @@ namespace Jmon_Switcher
             m_audioMixer.CreateIterator(ref AinIteratorIID, out AinIteratorPtr);
             if (AinIteratorPtr != null)
             {
-                m_audioInputiterator = (IBMDSwitcherAudioInputIterator)Marshal.GetObjectForIUnknown(AinIteratorPtr);
+                m_audioInputiterator = (IBMDSwitcherAudioInputIterator)Marshal.GetObjectForIUnknown(AinIteratorPtr);                
             }
 
             if (m_audioInputiterator != null)
