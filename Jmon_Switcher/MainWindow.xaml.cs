@@ -32,7 +32,7 @@ namespace Jmon_Switcher
         private IBMDSwitcherKey m_switcher_key;                     //ATEM 크로마키 담당.
         private IBMDSwitcherKeyChromaParameters m_chromaParameters; //ATEM 크로마키에서 Hue,Gain 등 파라미터 담당.
 
-        private IBMDSwitcherAudioMixer m_audioMixer;                                    //오디오 믹서 - out
+        private IBMDSwitcherAudioMixer m_audioMixer;                                    //오디오 믹서 
         private IBMDSwitcherAudioInput m_audioInput;                                    //오디오 gain, balance - cam
         private IBMDSwitcherAudioMonitorOutput m_audioMonitorOutput;                    //? 필요없는듯.
 
@@ -41,7 +41,9 @@ namespace Jmon_Switcher
         private SwitcherKeyMonitor m_switcherKeyMonitor;
         private ChromaParametersMonitor m_chromaParametersMonitor;
 
+        private AudioMixerMonitor m_audioMixerMonitor;
         private AudioInputMonitor m_audioinputMonitor;
+        private AudioMixerMonitorOutputMonitor m_audioOutputMonitor;
 
         private List<InputMonitor> m_inputMonitors = new List<InputMonitor>();  //Callback을 관리함.
         private string Switcher_IP = "192.168.21.199";
@@ -109,9 +111,23 @@ namespace Jmon_Switcher
             m_chromaParametersMonitor.ChromaYsupChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => Chroma_Ysup_Changed_Callback())));//크로마키 Ysup 가 변경되면,
             m_chromaParametersMonitor.ChromaLiftChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => Chroma_Lift_Changed_Callback())));//크로마키 Lift 가 변경되면
 
+            m_audioMixerMonitor = new AudioMixerMonitor();
+            m_audioMixerMonitor.ProgramOutBalanceChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => Update_AudioProgramOutBalance_Callback()))); //오디오 출력 balance 변경시,
+            m_audioMixerMonitor.ProgramOutGainChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => Update_AudioProgramOutGain_Callback())));      //오디오 출력 gain 변경시,
+
             m_audioinputMonitor = new AudioInputMonitor();
-            m_audioinputMonitor.AudioInputGainChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => Update_Audio_Input_Gain_Callback())));     //오디오 입력 gain 변경시,
-            m_audioinputMonitor.AudioInputBalanceChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => Update_Audio_Input_Balance_Callback())));  //오디오 입력 balance 변경시,
+            m_audioinputMonitor.BalanceChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => Update_Audio_Input_Balance_Callback())));  //오디오 입력 balance 변경시,
+            m_audioinputMonitor.GainChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => Update_Audio_Input_Gain_Callback())));     //오디오 입력 gain 변경시,
+
+            m_audioOutputMonitor = new AudioMixerMonitorOutputMonitor();
+            m_audioOutputMonitor.DimChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => AudioOutputDimChanged_Callback())));
+            m_audioOutputMonitor.DimLevelChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => AudioOutputDimLevelChanged_Callback())));
+            m_audioOutputMonitor.GainChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => AudioOutputGainChanged_Callback())));
+            m_audioOutputMonitor.LevelNotificationChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => AudioOutputLevelNotificationChanged_Callback())));
+            m_audioOutputMonitor.MonitorEnableChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => AudioOutputEnableChanged_Callback())));
+            m_audioOutputMonitor.MuteChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => AudioOutputMuteChanged_Callback())));
+            m_audioOutputMonitor.SoloChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => AudioOutputSoloChanged_Callback())));
+            m_audioOutputMonitor.SoloInputChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => AudioOutputSoloInputChanged_Callback())));
 
             //ATEM 스위치 연결
             m_switcherDiscovery = new CBMDSwitcherDiscovery();
@@ -267,7 +283,9 @@ namespace Jmon_Switcher
             //Audio Input iterator +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
 
             m_audioMixer = (IBMDSwitcherAudioMixer)m_switcher;
-            IntPtr AinIteratorPtr = IntPtr.Zero;
+            m_audioMixer.AddCallback(m_audioMixerMonitor);
+
+            IntPtr AinIteratorPtr;
             Guid AinIteratorIID = typeof(IBMDSwitcherAudioInputIterator).GUID;
             m_audioMixer.CreateIterator(ref AinIteratorIID, out AinIteratorPtr);
             if (AinIteratorPtr != null)
@@ -279,6 +297,13 @@ namespace Jmon_Switcher
             {
                 m_audioInputiterator.Next(out m_audioInput);
             }
+
+            if (m_audioInputiterator == null)
+            {
+                MessageBox.Show("Unexpected: Could not get first audio input", "Error");
+                return;
+            }
+
             m_audioInput.AddCallback(m_audioinputMonitor);
 
             //Audio Output iterator +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
@@ -294,7 +319,7 @@ namespace Jmon_Switcher
             {
                 m_audioOutputIterator.Next(out m_audioMonitorOutput);
             }
-            //m_audioMonitorOutput.AddCallback(m_audiooutputMonitor);
+            m_audioMonitorOutput.AddCallback(m_audioOutputMonitor);
 
 
 
@@ -767,6 +792,16 @@ namespace Jmon_Switcher
             }
             m_audioMixer.SetProgramOutGain(gain);
         }
+        
+        private void Update_AudioProgramOutBalance_Callback()
+        {
+            //미구현
+        }
+
+        private void Update_AudioProgramOutGain_Callback()
+        {
+            Console.WriteLine("dd");
+        }
         private void Update_Audio_Input_Gain_Callback()
         {
             Console.WriteLine("dd");
@@ -775,6 +810,40 @@ namespace Jmon_Switcher
         {
             Console.WriteLine("dd");
         }
+        private void AudioOutputDimChanged_Callback()
+        {
+            Console.WriteLine("dd");
+        }
+        private void AudioOutputDimLevelChanged_Callback()
+        {
+            Console.WriteLine("dd");
+        }
+        private void AudioOutputGainChanged_Callback()
+        {
+            Console.WriteLine("dd");
+        }
+        private void AudioOutputLevelNotificationChanged_Callback()
+        {
+            Console.WriteLine("dd");
+        }
+        private void AudioOutputEnableChanged_Callback()
+        {
+            Console.WriteLine("dd");
+        }
+        private void AudioOutputMuteChanged_Callback()
+        {
+            Console.WriteLine("dd");
+        }
+        private void AudioOutputSoloChanged_Callback()
+        {
+            Console.WriteLine("dd");
+        }
+        private void AudioOutputSoloInputChanged_Callback()
+        {
+            Console.WriteLine("dd");
+        }
+        
+            
 
         #endregion
 

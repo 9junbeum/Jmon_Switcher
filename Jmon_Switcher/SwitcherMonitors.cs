@@ -181,35 +181,145 @@ namespace Jmon_Switcher
             }
         }
     }
+    
+    class AudioMixerMonitor : IBMDSwitcherAudioMixerCallback
+    {
+        //Events:
+        public event SwitcherEventHandler ProgramOutLevelNotificationChanged;
+        public event SwitcherEventHandler ProgramOutBalanceChanged;
+        public event SwitcherEventHandler ProgramOutGainChanged;
 
+        public AudioMixerMonitor()
+        {
+        }
+
+        void IBMDSwitcherAudioMixerCallback.Notify(_BMDSwitcherAudioMixerEventType EventType)
+        {
+            switch (EventType)
+            {
+                case (_BMDSwitcherAudioMixerEventType.bmdSwitcherAudioMixerEventTypeProgramOutBalanceChanged):
+                    if (ProgramOutBalanceChanged != null)
+                        ProgramOutBalanceChanged(this, null);
+                    break;
+
+                case (_BMDSwitcherAudioMixerEventType.bmdSwitcherAudioMixerEventTypeProgramOutGainChanged):
+                    if (ProgramOutGainChanged != null)
+                        ProgramOutGainChanged(this, null);
+                    break;
+            }
+        }
+
+        void IBMDSwitcherAudioMixerCallback.ProgramOutLevelNotification(double Left, double Right, double PeakLeft, double PeakRight)
+        {
+            if (ProgramOutLevelNotificationChanged != null)
+                ProgramOutLevelNotificationChanged(this, null);
+        }
+    }
     class AudioInputMonitor : IBMDSwitcherAudioInputCallback
     {
-        public event SwitcherEventHandler AudioInputGainChanged;
-        public event SwitcherEventHandler AudioInputBalanceChanged;
+        //Events:
+        public event SwitcherEventHandler LevelNotificationChanged;
+        public event SwitcherEventHandler BalanceChanged;
+        public event SwitcherEventHandler GainChanged;
+        public event SwitcherEventHandler IsMixedInChanged;
+        public event SwitcherEventHandler MixOptionChanged;
 
         public AudioInputMonitor()
         {
-
-        }
-        void IBMDSwitcherAudioInputCallback.LevelNotification(double left, double right, double peakLeft, double peakRight)
-        {
-
         }
 
-
-        void IBMDSwitcherAudioInputCallback.Notify(_BMDSwitcherAudioInputEventType eventType)
+        void IBMDSwitcherAudioInputCallback.LevelNotification(double Left, double Right, double PeakLeft, double PeakRight)
         {
-            switch (eventType)
+            if (LevelNotificationChanged != null)
+                LevelNotificationChanged(this, null);
+        }
+
+        void IBMDSwitcherAudioInputCallback.Notify(_BMDSwitcherAudioInputEventType audioType)
+        {
+            switch (audioType)
             {
-                case _BMDSwitcherAudioInputEventType.bmdSwitcherAudioInputEventTypeGainChanged:
-                    if (AudioInputGainChanged != null)
-                        AudioInputGainChanged(this, null);
-                    break;
-                case _BMDSwitcherAudioInputEventType.bmdSwitcherAudioInputEventTypeBalanceChanged:
-                    if (AudioInputBalanceChanged != null)
-                        AudioInputBalanceChanged(this, null);
+                case (_BMDSwitcherAudioInputEventType.bmdSwitcherAudioInputEventTypeBalanceChanged):
+                    if (BalanceChanged != null)
+                        BalanceChanged(this, null);
                     break;
 
+                case (_BMDSwitcherAudioInputEventType.bmdSwitcherAudioInputEventTypeGainChanged):
+                    if (GainChanged != null)
+                        GainChanged(this, null);
+                    break;
+
+                case (_BMDSwitcherAudioInputEventType.bmdSwitcherAudioInputEventTypeIsMixedInChanged):
+                    if (IsMixedInChanged != null)
+                        IsMixedInChanged(this, null);
+                    break;
+
+                case (_BMDSwitcherAudioInputEventType.bmdSwitcherAudioInputEventTypeMixOptionChanged):
+                    if (MixOptionChanged != null)
+                        MixOptionChanged(this, null);
+                    break;
+            }
+        }
+    }
+    class AudioMixerMonitorOutputMonitor : IBMDSwitcherAudioMonitorOutputCallback
+    {
+        //Events:
+        public event SwitcherEventHandler LevelNotificationChanged;
+        public event SwitcherEventHandler DimChanged;
+        public event SwitcherEventHandler DimLevelChanged;
+        public event SwitcherEventHandler GainChanged;
+        public event SwitcherEventHandler MonitorEnableChanged;
+        public event SwitcherEventHandler MuteChanged;
+        public event SwitcherEventHandler SoloChanged;
+        public event SwitcherEventHandler SoloInputChanged;
+
+        public AudioMixerMonitorOutputMonitor()
+        {
+        }
+
+        void IBMDSwitcherAudioMonitorOutputCallback.LevelNotification(double Left, double Right, double PeakLeft, double PeakRight)
+        {
+            if (LevelNotificationChanged != null)
+                LevelNotificationChanged(this, null);
+        }
+
+        void IBMDSwitcherAudioMonitorOutputCallback.Notify(_BMDSwitcherAudioMonitorOutputEventType EventType)
+        {
+            switch (EventType)
+            {
+                case (_BMDSwitcherAudioMonitorOutputEventType.bmdSwitcherAudioMonitorOutputEventTypeDimChanged):
+                    if (DimChanged != null)
+                        DimChanged(this, null);
+                    break;
+
+                case (_BMDSwitcherAudioMonitorOutputEventType.bmdSwitcherAudioMonitorOutputEventTypeDimLevelChanged):
+                    if (DimLevelChanged != null)
+                        DimLevelChanged(this, null);
+                    break;
+
+                case (_BMDSwitcherAudioMonitorOutputEventType.bmdSwitcherAudioMonitorOutputEventTypeGainChanged):
+                    if (GainChanged != null)
+                        GainChanged(this, null);
+                    break;
+
+                case (_BMDSwitcherAudioMonitorOutputEventType.bmdSwitcherAudioMonitorOutputEventTypeMonitorEnableChanged):
+                    if (MonitorEnableChanged != null)
+                        MonitorEnableChanged(this, null);
+                    break;
+
+                case (_BMDSwitcherAudioMonitorOutputEventType.bmdSwitcherAudioMonitorOutputEventTypeMuteChanged):
+                    if (MuteChanged != null)
+                        MuteChanged(this, null);
+                    break;
+
+                case (_BMDSwitcherAudioMonitorOutputEventType.bmdSwitcherAudioMonitorOutputEventTypeSoloChanged):
+                    if (SoloChanged != null)
+                        SoloChanged(this, null);
+                    break;
+
+                case (_BMDSwitcherAudioMonitorOutputEventType.bmdSwitcherAudioMonitorOutputEventTypeSoloInputChanged):
+                    if (SoloInputChanged != null)
+                        SoloInputChanged(this, null);
+                    break;
             }
         }
     }
