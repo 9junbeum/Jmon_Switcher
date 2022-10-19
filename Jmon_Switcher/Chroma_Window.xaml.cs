@@ -61,7 +61,7 @@ namespace Jmon_Switcher
         }
         public void Set_Font_Size(double f_size)
         {
-            chroma_Caption.FontSize = f_size;
+            chroma_Caption.FontSize = f_size * 3; //비율 감안하여
 
         }
         public void Set_Font_Color(Brush f_color)

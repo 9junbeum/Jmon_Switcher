@@ -330,7 +330,7 @@
                     <Canvas x:Name="Canvas_Chroma_preview" Background="Magenta">
                         
                         <TextBox x:Name="Caption_main" Width="{Binding ElementName=Canvas_Chroma_preview, Path=ActualWidth}" Height="{Binding ElementName=Canvas_Chroma_preview, Path=ActualHeight}" 
-                                 Text="Test" IsReadOnly="True" VerticalContentAlignment="Bottom" TextAlignment="Center" FontSize="40"/>
+                                 Text="진명아이앤씨" IsReadOnly="True" VerticalContentAlignment="Bottom" TextAlignment="Center" FontSize="40"/>
                     </Canvas>
                         
                 </Grid>
@@ -346,12 +346,17 @@
                     <Button Width="100" Height="70" Content="하" Tag="3" Margin="5" Click="text_location_Btn_Click"/>
                 </UniformGrid>
 
-                <ComboBox Grid.Row="1" Grid.Column="1" x:Name="combo_screen_index_selector" Background="AliceBlue" SelectedIndex="1" SelectionChanged="combo_screen_index_selector_SelectionChanged" SelectedValuePath="Tag">
-                    <ComboBoxItem Content="1" Tag="0"/>
-                    <ComboBoxItem Content="2" Tag="1"/>
-                    <ComboBoxItem Content="3" Tag="2"/>
-                    <ComboBoxItem Content="4" Tag="3"/>
-                </ComboBox>
+                <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock Text="스크린 출력" Foreground="White" HorizontalAlignment="Center"/>
+                    
+                    <ComboBox x:Name="combo_screen_index_selector" Width="80" Background="AliceBlue" SelectedIndex="1" SelectionChanged="combo_screen_index_selector_SelectionChanged" SelectedValuePath="Tag">
+                        <ComboBoxItem Content="1" Tag="0"/>
+                        <ComboBoxItem Content="2" Tag="1"/>
+                        <ComboBoxItem Content="3" Tag="2"/>
+                        <ComboBoxItem Content="4" Tag="3"/>
+                    </ComboBox>
+                </StackPanel>
+                
 
             </Grid>
 
@@ -386,7 +391,9 @@
                     <Button x:Name="fsize_4" Tag="4" Background="LightGray" Width="60" Height="60" Margin="10" Content="1aA" FontSize="19" Padding="3" Click="Size_Change_Btn_Click"/>
                     <Button x:Name="fsize_5" Tag="5" Background="LightGray" Width="60" Height="60" Margin="10" Content="1aA" FontSize="24" Padding="3" Click="Size_Change_Btn_Click"/>
                 </StackPanel>
-                <TextBlock  Grid.Column="2" Grid.Row="2" Margin="10" Background="White" Width="350" Height="50" HorizontalAlignment="Left" VerticalAlignment="Center" DataContextChanged="TextBlock_DataContextChanged"/>
+                
+                <TextBox  Grid.Column="2" Grid.Row="2" Margin="10" Background="White" Width="350" Height="50" HorizontalAlignment="Left" VerticalAlignment="Center" TextChanged="TextBox_TextChanged"
+                          FontSize="20" VerticalContentAlignment="Center"/>
                 
                 <StackPanel Grid.Column="2" Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
                     <Button Width="60" Height="60" Margin="10" Background="Red" Click="Color_Change_Btn_Click"/>
@@ -432,17 +439,23 @@
                 </Grid>
                 <Slider x:Name="liftslider" ValueChanged="Chroma_Lift_ValueChanged" Maximum="1" LargeChange="0.1" SmallChange="0.01"/>
 
-                <UniformGrid Rows="1">
+                <UniformGrid Rows="1" Margin="0 10 0 10">
                     <Button Background="Magenta" Tag ="1" Width="100" Height="50" Click="chroma_value_Auto_change"/>
 
                     <Button Background="Green" Tag ="2" Width="100" Height="50" Click="chroma_value_Auto_change"/>
 
                     <Button Background="Cyan" Tag ="3" Width="100" Height="50" Click="chroma_value_Auto_change"/>
                 </UniformGrid>
-                <TextBox IsReadOnly="True" Foreground="White" FontSize="12"
+
+                <TextBlock Foreground="White" FontSize="12" Text="*간단 사용법*"/>
+                <TextBlock Foreground="White" FontSize="12"
                          Text="1. *대표색상* 버튼을 이용하면, 적절한 값으로 자동 설정됩니다."/>
-                <TextBox IsReadOnly="True" Foreground="White" FontSize="12"
+                <TextBlock Foreground="White" FontSize="12"
                          Text="2. 수동으로 값을 조절하면, 적절한 값으로 자동 설정됩니다."/>
+                <TextBlock Foreground="White" FontSize="12"
+                         Text="3. onAir 버튼은 크로마키 기능을 켜고 끌 수 있는 버튼입니다."/>
+                <TextBlock Foreground="White" FontSize="12"
+                         Text="4. Play 버튼은 크로마키 미리보기 값을 실제로 적용하는 버튼입니다."/>
 
 
             </StackPanel>

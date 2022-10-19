@@ -61,7 +61,6 @@ namespace Jmon_Switcher
         // Events:
         public event SwitcherEventHandler ProgramInputChanged;
         public event SwitcherEventHandler PreviewInputChanged;
-        public event SwitcherEventHandler TransitionFramesRemainingChanged;
         public event SwitcherEventHandler TransitionPositionChanged;
         public event SwitcherEventHandler InTransitionChanged;
 
@@ -81,10 +80,6 @@ namespace Jmon_Switcher
                 case _BMDSwitcherMixEffectBlockEventType.bmdSwitcherMixEffectBlockEventTypePreviewInputChanged:
                     if (PreviewInputChanged != null)
                         PreviewInputChanged(this, null);
-                    break;
-                case _BMDSwitcherMixEffectBlockEventType.bmdSwitcherMixEffectBlockEventTypeTransitionFramesRemainingChanged:
-                    if (TransitionFramesRemainingChanged != null)
-                        TransitionFramesRemainingChanged(this, null);
                     break;
                 case _BMDSwitcherMixEffectBlockEventType.bmdSwitcherMixEffectBlockEventTypeTransitionPositionChanged:
                     if (TransitionPositionChanged != null)
@@ -127,6 +122,9 @@ namespace Jmon_Switcher
     class ChromaMonitor : IBMDSwitcherKeyChromaParametersCallback
     {
         public event SwitcherEventHandler ChromaHueChanged;
+        public event SwitcherEventHandler ChromaGainChanged;
+        public event SwitcherEventHandler ChromaYsupChanged;
+        public event SwitcherEventHandler ChromaLiftChanged;
 
         public ChromaMonitor()
         {
@@ -141,9 +139,107 @@ namespace Jmon_Switcher
                     if (ChromaHueChanged != null)
                         ChromaHueChanged(this, null);
                     break;
+                case _BMDSwitcherKeyChromaParametersEventType.bmdSwitcherKeyChromaParametersEventTypeGainChanged:
+                    if (ChromaGainChanged != null)
+                        ChromaGainChanged(this, null);
+                    break;
+                case _BMDSwitcherKeyChromaParametersEventType.bmdSwitcherKeyChromaParametersEventTypeYSuppressChanged:
+                    if (ChromaYsupChanged != null)
+                        ChromaYsupChanged(this, null);
+                    break;
+                case _BMDSwitcherKeyChromaParametersEventType.bmdSwitcherKeyChromaParametersEventTypeLiftChanged:
+                    if (ChromaLiftChanged != null)
+                        ChromaLiftChanged(this, null);
+                    break;
 
             }
         }
     }
 
+    class KeyMonitor : IBMDSwitcherKeyCallback
+    {
+        public event SwitcherEventHandler KeyInputFillChanged;
+        public event SwitcherEventHandler KeyOnAirChanged;
+
+        public KeyMonitor()
+        {
+
+        }
+        void IBMDSwitcherKeyCallback.Notify(_BMDSwitcherKeyEventType eventType)
+        {
+            switch (eventType)
+            {
+                case _BMDSwitcherKeyEventType.bmdSwitcherKeyEventTypeInputFillChanged:
+                    if (KeyInputFillChanged != null)
+                        KeyInputFillChanged(this, null);
+                    break;
+                case _BMDSwitcherKeyEventType.bmdSwitcherKeyEventTypeOnAirChanged:
+                    if (KeyOnAirChanged != null)
+                        KeyOnAirChanged(this, null);
+                    break;
+
+            }
+        }
+    }
+
+    class AudioInputMonitor : IBMDSwitcherAudioInputCallback
+    {
+        public event SwitcherEventHandler AudioInputGainChanged;
+        public event SwitcherEventHandler AudioInputBalanceChanged;
+
+        public AudioInputMonitor()
+        {
+
+        }
+        void IBMDSwitcherAudioInputCallback.LevelNotification(double left, double right, double peakLeft, double peakRight)
+        {
+
+        }
+
+
+        void IBMDSwitcherAudioInputCallback.Notify(_BMDSwitcherAudioInputEventType eventType)
+        {
+            switch (eventType)
+            {
+                case _BMDSwitcherAudioInputEventType.bmdSwitcherAudioInputEventTypeGainChanged:
+                    if (AudioInputGainChanged != null)
+                        AudioInputGainChanged(this, null);
+                    break;
+                case _BMDSwitcherAudioInputEventType.bmdSwitcherAudioInputEventTypeBalanceChanged:
+                    if (AudioInputBalanceChanged != null)
+                        AudioInputBalanceChanged(this, null);
+                    break;
+
+            }
+        }
+    }
+
+    class AudioOutputMonitor : IBMDSwitcherAudioMonitorOutputCallback
+    {
+        public event SwitcherEventHandler AudioOutputGainChanged;
+
+        public AudioOutputMonitor()
+        {
+
+        }
+        void IBMDSwitcherAudioMonitorOutputCallback.LevelNotification(double left, double right, double peakLeft, double peakRight)
+        {
+
+        }
+
+
+        void IBMDSwitcherAudioMonitorOutputCallback.Notify(_BMDSwitcherAudioMonitorOutputEventType eventType)
+        {
+            switch (eventType)
+            {
+                case _BMDSwitcherAudioMonitorOutputEventType.bmdSwitcherAudioMonitorOutputEventTypeGainChanged:
+                    if (AudioOutputGainChanged != null)
+                        AudioOutputGainChanged(this, null);
+                    break;
+
+            }
+        }
+    }
 }
+
+

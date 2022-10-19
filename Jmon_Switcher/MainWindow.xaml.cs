@@ -41,13 +41,32 @@ namespace Jmon_Switcher
         private SwitcherMonitor m_switcherMonitor;
         private MixEffectBlockMonitor m_mixEffectBlockMonitor;
         private ChromaMonitor m_chromaMonitor;
+        private KeyMonitor m_keyMonitor;
+        private AudioInputMonitor m_audioinputMonitor;
+        private AudioOutputMonitor m_audiooutputMonitor;
 
         private List<InputMonitor> m_inputMonitors = new List<InputMonitor>();  //Callback을 관리함.
         private string Switcher_IP = "192.168.21.199";
 
 
-        
 
+
+        struct StringObjectPair<T>
+        {
+            public string name;
+            public T value;
+
+            public StringObjectPair(string name, T value)
+            {
+                this.name = name;
+                this.value = value;
+            }
+
+            public override string ToString()
+            {
+                return name;
+            }
+        }
         public enum _ATEM_TRAN_TYPE_ : int
         {
             eATT_Mix = 0,
@@ -79,12 +98,15 @@ namespace Jmon_Switcher
             m_mixEffectBlockMonitor = new MixEffectBlockMonitor();
             m_mixEffectBlockMonitor.ProgramInputChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => UpdateProgramButtonSelection())));
             m_mixEffectBlockMonitor.PreviewInputChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => UpdatePreviewButtonSelection())));
-            m_mixEffectBlockMonitor.TransitionFramesRemainingChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => UpdateTransitionFramesRemaining())));
             m_mixEffectBlockMonitor.TransitionPositionChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => UpdateSliderPosition())));
             m_mixEffectBlockMonitor.InTransitionChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => OnInTransitionChanged())));
 
             m_chromaMonitor = new ChromaMonitor();
-            m_chromaMonitor.ChromaHueChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => Chroma_Hue_Changed_Callback())));
+
+            m_chromaMonitor.ChromaHueChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => Chroma_Hue_Changed_Callback())));  //크로마키 Hue 가 변경되면,
+            m_chromaMonitor.ChromaGainChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => Chroma_Gain_Changed_Callback())));//크로마키 Gain 이 변경되면,
+            m_chromaMonitor.ChromaYsupChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => Chroma_Ysup_Changed_Callback())));//크로마키 Ysup 가 변경되면,
+            m_chromaMonitor.ChromaLiftChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => Chroma_Lift_Changed_Callback())));//크로마키 Lift 가 변경되면
 
             //ATEM 스위치 연결
             m_switcherDiscovery = new CBMDSwitcherDiscovery();
@@ -166,7 +188,7 @@ namespace Jmon_Switcher
             //string switcherName;
             //m_switcher.GetProductName(out switcherName);
             //textBoxSwitcherName.Content = switcherName;
-
+            
             // Install SwitcherMonitor callbacks:
             m_switcher.AddCallback(m_switcherMonitor);
 
@@ -187,6 +209,7 @@ namespace Jmon_Switcher
             {
                 IBMDSwitcherInput input;
                 inputIterator.Next(out input);
+
                 while (input != null)
                 {
                     InputMonitor newInputMonitor = new InputMonitor(input);
@@ -242,9 +265,8 @@ namespace Jmon_Switcher
             if (m_audioInputiterator != null)
             {
                 m_audioInputiterator.Next(out m_audioInput);
-                m_audioInputiterator.Next(out m_audioInput);
             }
-            //m_audioInput.AddCallback(m_audioInputMonitor);
+            m_audioInput.AddCallback(m_audioinputMonitor);
 
             //Audio Output iterator +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
             IntPtr AoutIteratorPtr = IntPtr.Zero;
@@ -259,7 +281,7 @@ namespace Jmon_Switcher
             {
                 m_audioOutputIterator.Next(out m_audioMonitorOutput);
             }
-            //m_audioMonitorOutput.AddCallback(m_audioOutputMonitor);
+            m_audioMonitorOutput.AddCallback(m_audiooutputMonitor);
 
 
 
@@ -271,7 +293,13 @@ namespace Jmon_Switcher
 
         private void OnInputLongNameChanged(object sender, object args)
         {
-            this.Dispatcher.Invoke((Action)(() => UpdatePopupItems()));
+            //입력 비디오 source가 바뀌면 
+            this.Dispatcher.Invoke((Action)(() =>
+            {
+                //update items.
+                Update_UI_From_ATEM_Switcher();
+
+            }));
         }
 
 
@@ -336,48 +364,8 @@ namespace Jmon_Switcher
         private void Update_UI_From_ATEM_Switcher()
         {
             //UI의 모든것(keyers 빼고)을 업데이트 하는 것.
-            UpdatePopupItems();
-            UpdateTransitionFramesRemaining();
+
             UpdateSliderPosition();
-
-        }
-        private void UpdatePopupItems()
-        {
-            // Clear the combo boxes:
-            //comboBoxProgramSel.Items.Clear();
-            //comboBoxPreviewSel.Items.Clear();
-            chroma_key_combo.Items.Clear();
-
-            // Get an input iterator.
-            IBMDSwitcherInputIterator inputIterator = null;
-            IntPtr inputIteratorPtr;
-            Guid inputIteratorIID = typeof(IBMDSwitcherInputIterator).GUID;
-            m_switcher.CreateIterator(ref inputIteratorIID, out inputIteratorPtr);
-            if (inputIteratorPtr != null)
-            {
-                inputIterator = (IBMDSwitcherInputIterator)Marshal.GetObjectForIUnknown(inputIteratorPtr);
-            }
-
-            if (inputIterator == null)
-                return;
-
-            IBMDSwitcherInput input;
-            inputIterator.Next(out input);
-            while (input != null)
-            {
-                string inputName;
-                long inputId;
-
-                input.GetInputId(out inputId);
-                input.GetLongName(out inputName);
-
-                // Add items to list:
-                //comboBoxProgramSel.Items.Add(new StringObjectPair<long>(inputName, inputId));
-                //comboBoxPreviewSel.Items.Add(new StringObjectPair<long>(inputName, inputId));
-                chroma_key_combo.Items.Add(new StringObjectPair<long>(inputName, inputId));
-
-                inputIterator.Next(out input);
-            }
 
             UpdateProgramButtonSelection();
             UpdatePreviewButtonSelection();
@@ -392,8 +380,10 @@ namespace Jmon_Switcher
 
             //선택된 item의 버튼 색 변경
             Black_program.Background = prog_Btn_1.Background = prog_Btn_2.Background = prog_Btn_3.Background = prog_Btn_4.Background = prog_Btn_5.Background = prog_Btn_6.Background = prog_Btn_7.Background = prog_Btn_8.Background = Brushes.LightGray;
+            
             switch (programId)
             {
+                
                 case 0: Black_program.Background = Brushes.Red; break;
                 case 1: prog_Btn_1.Background = Brushes.Red; break;
                 case 2: prog_Btn_2.Background = Brushes.Red; break;
@@ -434,32 +424,9 @@ namespace Jmon_Switcher
             }
         }
 
-        private void UpdateTransitionFramesRemaining()
-        {
-            uint framesRemaining;
-
-            m_mixEffectBlock1.GetTransitionFramesRemaining(out framesRemaining);
-        }
-
         /// <summary>
         /// Used for putting other object types into combo boxes.
         /// </summary>
-        struct StringObjectPair<T>
-        {
-            public string name;
-            public T value;
-
-            public StringObjectPair(string name, T value)
-            {
-                this.name = name;
-                this.value = value;
-            }
-
-            public override string ToString()
-            {
-                return name;
-            }
-        }
 
         private void Button_Click_Program(object sender, RoutedEventArgs e)
         {
@@ -825,6 +792,12 @@ namespace Jmon_Switcher
                     if(key != null)
                     {
                         m_switcher_key = key;
+                        m_keyMonitor = new KeyMonitor();
+                        m_switcher_key.AddCallback(m_keyMonitor);
+                        m_keyMonitor.KeyOnAirChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => Key_OnAirChanged_Callback())));
+                        m_keyMonitor.KeyInputFillChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => Key_InputFillChanged_Callback())));
+
+
                         m_chromaParameters = key as IBMDSwitcherKeyChromaParameters;
                         m_chromaParameters.AddCallback(m_chromaMonitor);
 
@@ -835,14 +808,51 @@ namespace Jmon_Switcher
             if(retVal == 1)
             {
                 //초기화 성공시
+                Update_Chroma_source_combobox();
                 Update_Chroma_Input_source();
                 Update_Chroma_Text_Value();
                 Update_Chroma_Slider_Value();
+                Update_Chroma_OnAir_Value();
                 Show_Chroma_output_source();
             }
 
             return retVal;
         }  //ok
+
+        private void Update_Chroma_source_combobox()
+        {
+            // Clear the combo boxes:
+            chroma_key_combo.Items.Clear();
+
+            // Get an input iterator.
+            IBMDSwitcherInputIterator inputIterator = null;
+            IntPtr inputIteratorPtr;
+            Guid inputIteratorIID = typeof(IBMDSwitcherInputIterator).GUID;
+            m_switcher.CreateIterator(ref inputIteratorIID, out inputIteratorPtr);
+            if (inputIteratorPtr != null)
+            {
+                inputIterator = (IBMDSwitcherInputIterator)Marshal.GetObjectForIUnknown(inputIteratorPtr);
+            }
+
+            if (inputIterator == null)
+                return;
+
+            IBMDSwitcherInput input;
+            inputIterator.Next(out input);
+            while (input != null)
+            {
+                long inputId;
+                string inputName;
+                input.GetInputId(out inputId);
+                input.GetLongName(out inputName);
+
+                // Add items to list:
+                chroma_key_combo.Items.Add(new StringObjectPair<long>(inputName, inputId));
+
+                inputIterator.Next(out input);
+            }
+
+        } //ok
         private void Update_Chroma_Input_source()
         {
             long selecteditem;
@@ -862,13 +872,10 @@ namespace Jmon_Switcher
             m_chromaParameters.GetYSuppress(out YSup_);
             m_chromaParameters.GetLift(out Lift_);
 
-            Dispatcher.Invoke(() =>
-            {
-                hueval.Text = Hue_.ToString();
-                gainval.Text = (Gain_ * 100 + "%").ToString();
-                ysupval.Text = (YSup_ * 100 + "%").ToString();
-                liftval.Text = (Lift_ * 100 + "%").ToString();
-            });
+            hueval.Text = Hue_.ToString();
+            gainval.Text = (Gain_ * 100 + "%").ToString();
+            ysupval.Text = (YSup_ * 100 + "%").ToString();
+            liftval.Text = (Lift_ * 100 + "%").ToString();
 
         } //ok
         private void Update_Chroma_Slider_Value()
@@ -889,12 +896,22 @@ namespace Jmon_Switcher
             ysupslider.Value = YSup_;
             liftslider.Value = Lift_;
 
-            Dispatcher.Invoke(() =>
+        } //ok
+        private void Update_Chroma_OnAir_Value()
+        {
+            if (m_switcher_key != null)
             {
-
-
-            });
-            Console.WriteLine("slider_value_chane");
+                int is_set_on_air;
+                m_switcher_key.GetOnAir(out is_set_on_air);
+                if (is_set_on_air == 0)
+                {
+                    on_air_Btn.Background = Brushes.LightGray;
+                }
+                else
+                {
+                    on_air_Btn.Background = Brushes.Red;
+                }
+            }
         } //ok
         private void Show_Chroma_output_source()
         {
@@ -1046,7 +1063,6 @@ namespace Jmon_Switcher
             //update
             Update_Chroma_Slider_Value();
             Update_Chroma_Text_Value();
-            Console.WriteLine("chroma_value_changed");
         } //ok
 
         private void On_Air_Btn_Click(object sender, RoutedEventArgs e)
@@ -1079,10 +1095,11 @@ namespace Jmon_Switcher
             cw.Set_VerticalAlignment(Caption_main.VerticalContentAlignment);
         } //ok
 
-        private void TextBlock_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            //자막 내용이 바뀔때마다.
-        }
+            TextBox tb = sender as TextBox;
+            Caption_main.Text = tb.Text;
+        } //ok
 
         private void text_location_Btn_Click(object sender, RoutedEventArgs e)
         {
@@ -1093,13 +1110,13 @@ namespace Jmon_Switcher
                 case "2": Caption_main.VerticalContentAlignment = VerticalAlignment.Center; break;//가운데
                 case "3": Caption_main.VerticalContentAlignment = VerticalAlignment.Bottom; break;//하단 
             }
-        }
+        } //ok
 
         private void Font_Family_Change_Btn_Click(object sender, RoutedEventArgs e)
         {
             Button b = sender as Button;
             Caption_main.FontFamily = b.FontFamily;
-        }
+        } //ok
 
         private void Size_Change_Btn_Click(object sender, RoutedEventArgs e)
         {
@@ -1114,7 +1131,7 @@ namespace Jmon_Switcher
                 case "5": Caption_main.FontSize = 70; fsize_5.Background = Brushes.LightGreen; break;
 
             }
-        }
+        } //ok
 
         private void Color_Change_Btn_Click(object sender, RoutedEventArgs e)
         {
@@ -1123,7 +1140,7 @@ namespace Jmon_Switcher
             Brush br = b.Background;//현재 색을 가지고 옴.
             Caption_main.Foreground = br;
 
-        }
+        } //ok
 
         private void Text_Flow_toggle_Btn_Click(object sender, RoutedEventArgs e)
         {
@@ -1136,19 +1153,65 @@ namespace Jmon_Switcher
             ComboBox cb = sender as ComboBox;
             if(cw != null)
             {
-                
                 cw.Set_Screen_Index(int.Parse(cb.SelectedValue.ToString()));
                 cw.Show_window_at_Screen_Index();
             }
-        }
+        } //ok
 
-        private void Chroma_Hue_Changed_Callback ()
+        private void Chroma_Hue_Changed_Callback()
         {
             //스위쳐에서 Hue값이 변경되면 실행됨.
             double hue_;
             m_chromaParameters.GetHue(out hue_);
+            hueslider.Value = hue_;
 
-        }
+        } //ok
+        private void Chroma_Gain_Changed_Callback()
+        {
+            //스위쳐에서 Gain값이 변경되면 실행됨.
+            double gain_;
+            m_chromaParameters.GetGain(out gain_);
+            gainslider.Value = gain_;
+
+        } //ok
+        private void Chroma_Ysup_Changed_Callback()
+        {
+            //스위쳐에서 Ysup값이 변경되면 실행됨.
+            double ysup_;
+            m_chromaParameters.GetYSuppress(out ysup_);
+            ysupslider.Value = ysup_;
+
+        } //ok
+        private void Chroma_Lift_Changed_Callback()
+        {
+            //스위쳐에서 Lift값이 변경되면 실행됨.
+            double lift_;
+            m_chromaParameters.GetLift(out lift_);
+            liftslider.Value = lift_;
+
+        } //ok
+        private void Key_OnAirChanged_Callback()
+        {
+            //추가 해야함.
+            if (m_switcher_key != null)
+            {
+                int is_set_on_air;
+                m_switcher_key.GetOnAir(out is_set_on_air);
+                if (is_set_on_air == 0)
+                {
+                    on_air_Btn.Background = Brushes.LightGray;
+                }
+                else
+                {
+                    on_air_Btn.Background = Brushes.Red;
+                }
+            }
+        }  //ok
+        private void Key_InputFillChanged_Callback()
+        {
+            Update_Chroma_Input_source();
+        } //ok
+
         #endregion
 
     }
