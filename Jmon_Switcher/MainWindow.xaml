@@ -8,9 +8,10 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         Title="JHD-3000" Height="1080" Width="1920"
-        WindowState="Maximized" WindowStyle="None">
+        WindowState="Maximized" WindowStyle="None"
+        Closed="Window_Closed">
 
-    <Grid>
+    <Grid >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="130*"/>
             <ColumnDefinition Width="50*"/>
@@ -26,9 +27,13 @@
                 <Image Source="/Resources/logo.png" />
                 <Label x:Name="textBoxSwitcherName" Content="Video Switcher for JHD-3000" FontSize="30" FontWeight="Bold" Background="Transparent" VerticalAlignment="Bottom"/>
             </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <TextBox x:Name="IP_Textbox" Width="200" Background="White" Margin="10"/>
+                <Button x:Name="IP_connect" Content="연결" Margin="10" Click="IP_connect_Click"/>
+            </StackPanel>
         </Grid>
         <!--비디오 스위칭, 오디오 스위칭 메인 기능-->
-        <Grid Grid.Row="1" Background="Wheat">
+        <Grid Grid.Row="1" Background="Wheat" x:Name="Video_Grid" IsEnabled="False">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="810"/>
                 <ColumnDefinition Width="80"/>
@@ -258,7 +263,7 @@
         </Grid>
 
 
-        <Grid Grid.Row="1" Grid.Column="1" Background="#5f5f5f">
+        <Grid Grid.Row="1" Grid.Column="1" Background="#5f5f5f" x:Name="Transition_Grid" IsEnabled="False">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*"/>
                 <ColumnDefinition Width="*"/>
@@ -310,7 +315,7 @@
         </Grid>
 
         <!--크로마키 기능 PIP 제외-->
-        <Grid Grid.Row="2" Grid.Column="0" Background="#3F3F3F">
+        <Grid Grid.Row="2" Grid.Column="0" Background="#3F3F3F" x:Name="Chroma_Grid" IsEnabled="False">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="800"/>
                 <ColumnDefinition Width="*"/>
@@ -414,7 +419,7 @@
             
         </Grid>
 
-        <Grid Grid.Row="2" Grid.Column="1" Background="#3F3F3F">
+        <Grid Grid.Row="2" Grid.Column="1" Background="#3F3F3F" x:Name="Chroma_Grid_" IsEnabled="False">
             <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="10">
                 <Label Content="Source"/>
                 <hc:ComboBox x:Name="chroma_key_combo" SelectionChanged="chroma_key_combo_SelectionChanged"/>

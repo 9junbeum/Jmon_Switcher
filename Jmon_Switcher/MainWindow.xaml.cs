@@ -28,26 +28,22 @@ namespace Jmon_Switcher
         private IBMDSwitcherDiscovery m_switcherDiscovery;          //ATEM 연결을 위해 장비 찾는 것.
 
         private IBMDSwitcher m_switcher;                            //ATEM 스위쳐 장비 그 자체.
-        private IBMDSwitcherMixEffectBlock m_mixEffectBlock;       //ATEM 화면 입,출력 + 화면전환.
+        private IBMDSwitcherMixEffectBlock m_mixEffectBlock;        //ATEM 화면 입,출력 + 화면전환.
         private IBMDSwitcherKey m_switcher_key;                     //ATEM 크로마키 담당.
         private IBMDSwitcherKeyChromaParameters m_chromaParameters; //ATEM 크로마키에서 Hue,Gain 등 파라미터 담당.
-
-        private IBMDSwitcherAudioMixer m_audioMixer;                                    //오디오 믹서 
-        private IBMDSwitcherAudioInput m_audioInput;                                    //오디오 gain, balance - cam
-        private IBMDSwitcherAudioMonitorOutput m_audioMonitorOutput;                    //? 필요없는듯.
+        private IBMDSwitcherAudioMixer m_audioMixer;                //오디오 믹서 
+        private IBMDSwitcherAudioInput m_audioInput;                //오디오 Input gain, balance - cam
+        private IBMDSwitcherAudioMonitorOutput m_audioMonitorOutput;//오디오 Output  
 
         private SwitcherMonitor m_switcherMonitor;
         private MixEffectBlockMonitor m_mixEffectBlockMonitor;
         private SwitcherKeyMonitor m_switcherKeyMonitor;
         private ChromaParametersMonitor m_chromaParametersMonitor;
-
         private AudioMixerMonitor m_audioMixerMonitor;
         private AudioInputMonitor m_audioinputMonitor;
         private AudioMixerMonitorOutputMonitor m_audioOutputMonitor;
 
         private List<InputMonitor> m_inputMonitors = new List<InputMonitor>();  //Callback을 관리함.
-        private string Switcher_IP = "192.168.21.199";
-
 
         private IBMDSwitcherInputIterator inputIterator = null;
         private IBMDSwitcherMixEffectBlockIterator meIterator = null;
@@ -85,15 +81,17 @@ namespace Jmon_Switcher
             eATT_Max
         }        //transition enum
         Chroma_Window cw = new Chroma_Window(); //크로마키 보여줄 창 
+        Save_Settings ss = new Save_Settings();
         private bool m_moveSliderDownwards = false;
         private bool m_currentTransitionReachedHalfway = false;
+        private string Switcher_IP = "192.168.21.199";
 
 
 
         public MainWindow()
         {
             InitializeComponent();
-
+            ss.set_Path(System.IO.Directory.GetCurrentDirectory() + @"JHD3000_settings");
             //Callback 함수 구현부
             m_switcherMonitor = new SwitcherMonitor();
             m_switcherMonitor.SwitcherDisconnected += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => SwitcherDisconnected())));
@@ -136,11 +134,28 @@ namespace Jmon_Switcher
                 MessageBox.Show("Could not create Switcher Discovery Instance.\nATEM Switcher Software may not be installed.", "Error");
                 Environment.Exit(1);
             }
+            Load_Save_File();
+        }
 
+        private void Load_Save_File()
+        {
+            //저장된 설정을 불러오기
+            if(ss.is_SaveFile_Exist())
+            {
+                //저장된 파일이 있으면,
+                IP_Textbox.Text = ss.LOAD(0);
+                combo_screen_index_selector.SelectedIndex = int.Parse(ss.LOAD(1));
+            }
+            else
+            {
+                MessageBox.Show("저장된 설정 파일이 없습니다.\nSwitcher IP를 입력 후 연결 버튼을 누르시오.", "주의", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+        private void IP_connect_Click(object sender, RoutedEventArgs e)
+        {
             SwitcherDisconnected();		// start with switcher disconnected
             Connect_Switcher();         // auto connect to switcher
         }
-
         private void SwitcherDisconnected()
         {
             textBoxSwitcherName.Content = "";
@@ -185,7 +200,7 @@ namespace Jmon_Switcher
         private void Connect_Switcher()
         {
             _BMDSwitcherConnectToFailure failReason = 0;
-            string address = Switcher_IP;
+            string address = IP_Textbox.Text;
 
             try
             {
@@ -213,7 +228,7 @@ namespace Jmon_Switcher
         } //ok
         private void SwitcherConnected()
         {
-
+            MessageBox.Show("성공적으로 연결되었습니다.");
             // Get the switcher name:
             //string switcherName;
             //m_switcher.GetProductName(out switcherName);
@@ -319,12 +334,11 @@ namespace Jmon_Switcher
             {
                 m_audioOutputIterator.Next(out m_audioMonitorOutput);
             }
-            m_audioMonitorOutput.AddCallback(m_audioOutputMonitor);
+            //m_audioMonitorOutput.AddCallback(m_audioOutputMonitor);
 
 
 
             InitKeyersData();
-
             UI_SetEnable(true);      //스위치에 연결되면, UI를 사용할 수 있도록 enable 해주는 함수.
             Update_UI_From_ATEM_Switcher();
         }
@@ -344,84 +358,48 @@ namespace Jmon_Switcher
 
         private void UI_SetEnable(bool enable)
         {
-            //comboBoxProgramSel.IsEnabled = enable;
-            //comboBoxPreviewSel.IsEnabled = enable;
-            //대신 아래 코드
-            prog_Btn_1.IsEnabled = enable;
-            prog_Btn_2.IsEnabled = enable;
-            prog_Btn_3.IsEnabled = enable;
-            prog_Btn_4.IsEnabled = enable;
-            prog_Btn_5.IsEnabled = enable;
-            prog_Btn_6.IsEnabled = enable;
-            prog_Btn_7.IsEnabled = enable;
-            prog_Btn_8.IsEnabled = enable;
-
-            prev_Btn_1.IsEnabled = enable;
-            prev_Btn_2.IsEnabled = enable;
-            prev_Btn_3.IsEnabled = enable;
-            prev_Btn_4.IsEnabled = enable;
-            prev_Btn_5.IsEnabled = enable;
-            prev_Btn_6.IsEnabled = enable;
-            prev_Btn_7.IsEnabled = enable;
-            prev_Btn_8.IsEnabled = enable;
-
-            audio_Btn_1.Set_Btn_enable(); //위와 같은 기능
-            audio_Btn_2.Set_Btn_enable();
-            audio_Btn_3.Set_Btn_enable();
-            audio_Btn_4.Set_Btn_enable();
-            audio_Btn_5.Set_Btn_enable();
-            audio_Btn_6.Set_Btn_enable();
-            audio_Btn_7.Set_Btn_enable();
-            audio_Btn_8.Set_Btn_enable();
-
-            LR_Audio_balance_1.IsEnabled = enable;
-            LR_Audio_balance_2.IsEnabled = enable;
-            LR_Audio_balance_3.IsEnabled = enable;
-            LR_Audio_balance_4.IsEnabled = enable;
-            LR_Audio_balance_5.IsEnabled = enable;
-            LR_Audio_balance_6.IsEnabled = enable;
-            LR_Audio_balance_7.IsEnabled = enable;
-            LR_Audio_balance_8.IsEnabled = enable;
-
-            Volume_Audio_1.IsEnabled = enable;
-            Volume_Audio_2.IsEnabled = enable;
-            Volume_Audio_3.IsEnabled = enable;
-            Volume_Audio_4.IsEnabled = enable;
-            Volume_Audio_5.IsEnabled = enable;
-            Volume_Audio_6.IsEnabled = enable;
-            Volume_Audio_7.IsEnabled = enable;
-            Volume_Audio_8.IsEnabled = enable;
-
-            buttonAuto.IsEnabled = enable;
-            buttonCut.IsEnabled = enable;
-            Slider_transition_bar.IsEnabled = enable;
-
-            //다른 버튼들도 추가 해야함.
-        } //추가해야함.
+            Video_Grid.IsEnabled = enable;
+            Transition_Grid.IsEnabled = enable;
+            Chroma_Grid.IsEnabled = enable;
+            Chroma_Grid_.IsEnabled = enable;
+        }
 
         private void Update_UI_From_ATEM_Switcher()
         {
             //UI의 모든것(keyers 빼고)을 업데이트 하는 것.
 
             UpdateSliderPosition();
-
             UpdateProgramButtonSelection();
             UpdatePreviewButtonSelection();
+            //오디오 업데이트 추가해야함.
         }
         private void UpdateProgramButtonSelection()
         {
             //프로그램 버튼 
             long programId;
-            m_mixEffectBlock.GetProgramInput(out programId);
 
+            m_mixEffectBlock.GetProgramInput(out programId);
+            
             // Select the program popup entry that matches the input id:
 
             //선택된 item의 버튼 색 변경
-            Black_program.Background = prog_Btn_1.Background = prog_Btn_2.Background = prog_Btn_3.Background = prog_Btn_4.Background = prog_Btn_5.Background = prog_Btn_6.Background = prog_Btn_7.Background = prog_Btn_8.Background = Brushes.LightGray;
-            
+            Black_program.Background = Brushes.LightGray;
+            prog_Btn_1.Background = Brushes.LightGray;
+            prog_Btn_2.Background = Brushes.LightGray;
+            prog_Btn_3.Background = Brushes.LightGray;
+            prog_Btn_4.Background = Brushes.LightGray;
+            prog_Btn_5.Background = Brushes.LightGray;
+            prog_Btn_6.Background = Brushes.LightGray;
+            prog_Btn_7.Background = Brushes.LightGray;
+            prog_Btn_8.Background = Brushes.LightGray;
+            Bar_program.Background = Brushes.LightGray;
+            Color_program_1.Background = Brushes.LightGray;
+            Color_program_2.Background = Brushes.LightGray;
+            Media_program_1.Background = Brushes.LightGray;
+            Media_program_2.Background = Brushes.LightGray;
+
             switch (programId)
             {
-                
                 case 0: Black_program.Background = Brushes.Red; break;
                 case 1: prog_Btn_1.Background = Brushes.Red; break;
                 case 2: prog_Btn_2.Background = Brushes.Red; break;
@@ -431,10 +409,14 @@ namespace Jmon_Switcher
                 case 6: prog_Btn_6.Background = Brushes.Red; break;
                 case 7: prog_Btn_7.Background = Brushes.Red; break;
                 case 8: prog_Btn_8.Background = Brushes.Red; break;
+                case 1000: Bar_program.Background = Brushes.Red; break;
+                case 2001: Color_program_1.Background = Brushes.Red; break;
+                case 2002: Color_program_2.Background = Brushes.Red; break;
+                case 3010: Media_program_1.Background = Brushes.Red; break;
+                case 3020: Media_program_2.Background = Brushes.Red; break;
 
             }
         }
-
         private void UpdatePreviewButtonSelection()
         {
             long previewId;
@@ -446,7 +428,22 @@ namespace Jmon_Switcher
             //선택된 item의 버튼 색 변경
 
             //선택된 item의 버튼 색 변경
-            Black_preview.Background = prev_Btn_1.Background = prev_Btn_2.Background  = prev_Btn_3.Background = prev_Btn_4.Background = prev_Btn_5.Background = prev_Btn_6.Background = prev_Btn_7.Background = prev_Btn_8.Background = Brushes.LightGray;
+            Black_preview.Background = Brushes.LightGray;
+            prev_Btn_1.Background = Brushes.LightGray;
+            prev_Btn_2.Background = Brushes.LightGray;
+            prev_Btn_3.Background = Brushes.LightGray;
+            prev_Btn_4.Background = Brushes.LightGray;
+            prev_Btn_5.Background = Brushes.LightGray;
+            prev_Btn_6.Background = Brushes.LightGray;
+            prev_Btn_7.Background = Brushes.LightGray;
+            prev_Btn_8.Background = Brushes.LightGray;
+            Bar_preview.Background = Brushes.LightGray;
+            Color_preview_1.Background = Brushes.LightGray;
+            Color_preview_2.Background = Brushes.LightGray;
+            Media_preview_1.Background = Brushes.LightGray;
+            Media_preview_2.Background = Brushes.LightGray;
+
+
             switch (previewId)
             {
                 case 0: Black_preview.Background = Brushes.Red; break;
@@ -458,13 +455,15 @@ namespace Jmon_Switcher
                 case 6: prev_Btn_6.Background = Brushes.Red; break;
                 case 7: prev_Btn_7.Background = Brushes.Red; break;
                 case 8: prev_Btn_8.Background = Brushes.Red; break;
+                case 1000: Bar_preview.Background = Brushes.Red; break;
+                case 2001: Color_preview_1.Background = Brushes.Red; break;
+                case 2002: Color_preview_2.Background = Brushes.Red; break;
+                case 3010: Media_preview_1.Background = Brushes.Red; break;
+                case 3020: Media_preview_2.Background = Brushes.Red; break;
 
             }
         }
 
-        /// <summary>
-        /// Used for putting other object types into combo boxes.
-        /// </summary>
 
         private void Button_Click_Program(object sender, RoutedEventArgs e)
         {
@@ -793,6 +792,10 @@ namespace Jmon_Switcher
             m_audioMixer.SetProgramOutGain(gain);
         }
         
+
+
+
+
         private void Update_AudioProgramOutBalance_Callback()
         {
             //미구현
@@ -1234,8 +1237,8 @@ namespace Jmon_Switcher
 
         private void Text_Flow_toggle_Btn_Click(object sender, RoutedEventArgs e)
         {
-            //미구현
-        }
+
+        } //미구현 추후 ppt 구현으로 사용.
 
         private void combo_screen_index_selector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -1304,5 +1307,9 @@ namespace Jmon_Switcher
 
         #endregion
 
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            ss.SAVE(IP_Textbox.Text, combo_screen_index_selector.SelectedIndex);
+        }
     }
 }
