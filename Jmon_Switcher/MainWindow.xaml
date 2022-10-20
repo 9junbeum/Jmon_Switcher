@@ -8,8 +8,7 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         Title="JHD-3000" Height="1080" Width="1920"
-        WindowState="Maximized" WindowStyle="None"
-        Closed="Window_Closed">
+        WindowState="Maximized" WindowStyle="None">
 
     <Grid >
         <Grid.ColumnDefinitions>
@@ -28,8 +27,10 @@
                 <Label x:Name="textBoxSwitcherName" Content="Video Switcher for JHD-3000" FontSize="30" FontWeight="Bold" Background="Transparent" VerticalAlignment="Bottom"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                <TextBox x:Name="IP_Textbox" Width="200" Background="White" Margin="10"/>
+                <Label Content="IP Address :" VerticalContentAlignment="Center" Foreground="Black" FontSize="20"/>
+                <TextBox x:Name="IP_Textbox" Width="200" Background="White" Margin="10" VerticalContentAlignment="Center" TextAlignment="Center" FontSize="18"/>
                 <Button x:Name="IP_connect" Content="연결" Margin="10" Click="IP_connect_Click"/>
+                <Button x:Name="Shutdown" Content="종료" Margin="10" Click="Shutdown_Click"/>
             </StackPanel>
         </Grid>
         <!--비디오 스위칭, 오디오 스위칭 메인 기능-->
@@ -311,7 +312,11 @@
                 </Grid>
             </Grid>
 
-            <ScrollBar Grid.Column="1" x:Name="Slider_transition_bar" Scroll="Slider_transition_bar_Scroll" Orientation="Vertical" Maximum="100" Minimum="0" SmallChange="1" LargeChange="5" />
+            <ScrollBar Grid.Column="1" x:Name="Slider_transition_bar" Scroll="Slider_transition_bar_Scroll" Orientation="Vertical" Maximum="100" Minimum="0" SmallChange="1" LargeChange="5"
+                       Width="100" Background="AntiqueWhite">
+                
+            </ScrollBar>
+            
         </Grid>
 
         <!--크로마키 기능 PIP 제외-->
@@ -343,7 +348,7 @@
                 <UniformGrid Grid.Row="1" Columns="3">
                     <Button Width="100" Height="70" Content="play" Click="Play_Btn_Click" Background="LightGray"/>
                     <Button x:Name="on_air_Btn" Width="100" Height="70" Content="on air" Click="On_Air_Btn_Click" Background="LightGray"/>
-                    <Button Width="100" Height="70" Content="text flow" Click="Text_Flow_toggle_Btn_Click" Background="LightGray"/>
+                    <Button Width="100" Height="70" Content="text flow" Click="Get_From_PPT" Background="LightGray"/>
                 </UniformGrid>
                 <UniformGrid Grid.Column="1" Rows="3">
                     <Button Width="100" Height="70" Content="상" Tag="1" Margin="5" Click="text_location_Btn_Click"/>

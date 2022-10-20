@@ -43,6 +43,7 @@ namespace Jmon_Switcher
             try
             {
                 jobj = new JObject(new JProperty("IP_Address", ipAddress), new JProperty("Screen_Index", screenIndex));
+                File.WriteAllText(save_path, jobj.ToString());
             }
             catch(Exception ex)
             {

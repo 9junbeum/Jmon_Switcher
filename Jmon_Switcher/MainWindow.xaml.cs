@@ -18,6 +18,7 @@ using System.Windows.Shapes;
 using BMDSwitcherAPI;
 using HandyControl.Tools.Extension;
 
+
 namespace Jmon_Switcher
 {
     /// <summary>
@@ -84,8 +85,6 @@ namespace Jmon_Switcher
         Save_Settings ss = new Save_Settings();
         private bool m_moveSliderDownwards = false;
         private bool m_currentTransitionReachedHalfway = false;
-        private string Switcher_IP = "192.168.21.199";
-
 
 
         public MainWindow()
@@ -136,21 +135,28 @@ namespace Jmon_Switcher
             }
             Load_Save_File();
         }
-
         private void Load_Save_File()
         {
             //저장된 설정을 불러오기
-            if(ss.is_SaveFile_Exist())
+            if (ss.is_SaveFile_Exist())
             {
                 //저장된 파일이 있으면,
                 IP_Textbox.Text = ss.LOAD(0);
-                combo_screen_index_selector.SelectedIndex = int.Parse(ss.LOAD(1));
+                combo_screen_index_selector.SelectedIndex = ss.LOAD(1);
             }
             else
             {
                 MessageBox.Show("저장된 설정 파일이 없습니다.\nSwitcher IP를 입력 후 연결 버튼을 누르시오.", "주의", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
+
+        private void Shutdown_Click(object sender, RoutedEventArgs e)
+        {
+            ss.SAVE(IP_Textbox.Text, combo_screen_index_selector.SelectedIndex);
+            this.Close();
+            cw.Close();
+        } //시스템 끄기(저장을 곁들인)
+
         private void IP_connect_Click(object sender, RoutedEventArgs e)
         {
             SwitcherDisconnected();		// start with switcher disconnected
@@ -362,6 +368,8 @@ namespace Jmon_Switcher
             Transition_Grid.IsEnabled = enable;
             Chroma_Grid.IsEnabled = enable;
             Chroma_Grid_.IsEnabled = enable;
+            IP_Textbox.IsEnabled = false;
+            IP_connect.IsEnabled = false;
         }
 
         private void Update_UI_From_ATEM_Switcher()
@@ -728,7 +736,6 @@ namespace Jmon_Switcher
 
                 m_audioInput.SetBalance(LRVal);
 
-
             }
             return retVal;
         } //이거다 
@@ -800,7 +807,6 @@ namespace Jmon_Switcher
         {
             //미구현
         }
-
         private void Update_AudioProgramOutGain_Callback()
         {
             Console.WriteLine("dd");
@@ -1235,10 +1241,10 @@ namespace Jmon_Switcher
 
         } //ok
 
-        private void Text_Flow_toggle_Btn_Click(object sender, RoutedEventArgs e)
+        private void Get_From_PPT(object sender, RoutedEventArgs e)
         {
 
-        } //미구현 추후 ppt 구현으로 사용.
+        } 
 
         private void combo_screen_index_selector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -1307,9 +1313,7 @@ namespace Jmon_Switcher
 
         #endregion
 
-        private void Window_Closed(object sender, EventArgs e)
-        {
-            ss.SAVE(IP_Textbox.Text, combo_screen_index_selector.SelectedIndex);
-        }
+
+
     }
 }
