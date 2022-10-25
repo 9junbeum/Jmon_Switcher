@@ -18,6 +18,9 @@ using System.Windows.Shapes;
 using BMDSwitcherAPI;
 using HandyControl.Tools.Extension;
 
+//ppt 사용을 위해 추가
+using Microsoft.Office.Core;
+using PowerPoint = Microsoft.Office.Interop.PowerPoint;
 
 namespace Jmon_Switcher
 {
@@ -82,7 +85,8 @@ namespace Jmon_Switcher
             eATT_Max
         }        //transition enum
         Chroma_Window cw = new Chroma_Window(); //크로마키 보여줄 창 
-        Save_Settings ss = new Save_Settings();
+        Save_Settings ss = new Save_Settings(); //설정 저장
+        PPT ppt = PPT.Instance;                 //ppt 클래스(singleton)
         private bool m_moveSliderDownwards = false;
         private bool m_currentTransitionReachedHalfway = false;
 
@@ -571,7 +575,6 @@ namespace Jmon_Switcher
 
             return retVal;
         }
-
         public void SetTransitionPattern(int PatternVal)
         {
 
@@ -613,7 +616,6 @@ namespace Jmon_Switcher
                 }
             }
         }
-
         private void Transition_Btn_Click(object sender, RoutedEventArgs e)
         {
             Button b = sender as Button;
@@ -621,7 +623,6 @@ namespace Jmon_Switcher
 
             SetTransitionPattern(tran_type);
         }
-
         private void UpdateSliderPosition()
         {
             double transitionPos;
@@ -635,7 +636,6 @@ namespace Jmon_Switcher
             else
                 Slider_transition_bar.Value = (int)(transitionPos * 100);
         } //ok
-
         private void OnInTransitionChanged()
         {
             int inTransition;
@@ -653,8 +653,6 @@ namespace Jmon_Switcher
                 m_currentTransitionReachedHalfway = false;
             }
         } //ok
-
-
         private void SetProgramCurrentInput(int number)
         {
             long inputId = number;
@@ -664,7 +662,6 @@ namespace Jmon_Switcher
                 m_mixEffectBlock.SetProgramInput(inputId);
             }
         }
-
         private void SetPreviewCurrentInput(int number)
         {
             long inputId = number;
@@ -674,7 +671,6 @@ namespace Jmon_Switcher
                 m_mixEffectBlock.SetPreviewInput(inputId);
             }
         }
-
         private void buttonAuto_Click(object sender, EventArgs e)
         {
             if (m_mixEffectBlock != null)
@@ -682,7 +678,6 @@ namespace Jmon_Switcher
                 m_mixEffectBlock.PerformAutoTransition();
             }
         } //ok
-
         private void buttonCut_Click(object sender, EventArgs e)
         {
             if (m_mixEffectBlock != null)
@@ -690,7 +685,6 @@ namespace Jmon_Switcher
                 m_mixEffectBlock.PerformCut();
             }
         } //ok
-
         private void Slider_transition_bar_Scroll(object sender, System.Windows.Controls.Primitives.ScrollEventArgs e)
         {
             if (m_mixEffectBlock != null)
@@ -703,11 +697,9 @@ namespace Jmon_Switcher
             }
         } //ok
 
-
         #endregion
 
         #region audio function
-
 
         int SetAudioInputGainByIndex(int idx, double gainVal)
         {
@@ -746,7 +738,6 @@ namespace Jmon_Switcher
             {
                 int idx = int.Parse(slider.Tag.ToString());
                 double LR_val = double.Parse(slider.Value.ToString());
-
 
                 SetAudioInputBalanceByIndex(idx, LR_val);
             }
@@ -798,26 +789,30 @@ namespace Jmon_Switcher
             }
             m_audioMixer.SetProgramOutGain(gain);
         }
-        
 
-
-
-
+        //callback
         private void Update_AudioProgramOutBalance_Callback()
         {
             //미구현
-        }
+        } //ok
         private void Update_AudioProgramOutGain_Callback()
         {
-            Console.WriteLine("dd");
-        }
+            double out_gain;
+            m_audioMixer.GetProgramOutGain(out out_gain);
+            Volume_Audio_OUT.Value = out_gain;
+        } //ok
         private void Update_Audio_Input_Gain_Callback()
         {
-            Console.WriteLine("dd");
+            long idx;
+            IBMDSwitcherAudioInput input;
+            double gain;
+
+            m_audioInput.GetAudioInputId(out idx);
+            m_audioInputiterator.GetById(idx, out input);
+            m_audioInput.GetGain(out gain);
         }
         private void Update_Audio_Input_Balance_Callback()
         {
-            Console.WriteLine("dd");
         }
         private void AudioOutputDimChanged_Callback()
         {
@@ -850,9 +845,7 @@ namespace Jmon_Switcher
         private void AudioOutputSoloInputChanged_Callback()
         {
             Console.WriteLine("dd");
-        }
-        
-            
+        }           
 
         #endregion
 
@@ -896,7 +889,7 @@ namespace Jmon_Switcher
                         m_switcherKeyMonitor.KeyOnAirChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => Key_OnAirChanged_Callback())));
                         m_switcherKeyMonitor.KeyInputFillChanged += new SwitcherEventHandler((s, a) => this.Dispatcher.Invoke((Action)(() => Key_InputFillChanged_Callback())));
 
-
+                        m_switcher_key.SetType(_BMDSwitcherKeyType.bmdSwitcherKeyTypeChroma);
                         m_chromaParameters = key as IBMDSwitcherKeyChromaParameters;
                         m_chromaParameters.AddCallback(m_chromaParametersMonitor);
 
@@ -917,7 +910,6 @@ namespace Jmon_Switcher
 
             return retVal;
         }  //ok
-
         private void Update_Chroma_source_combobox()
         {
             // Clear the combo boxes:
@@ -1019,7 +1011,6 @@ namespace Jmon_Switcher
             cw.Show();
         } //ok 
 
-
         private void Chroma_Hue_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             //Hue
@@ -1029,7 +1020,6 @@ namespace Jmon_Switcher
 
 
         } //ok
-
         private void Chroma_Gain_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             //Gain
@@ -1038,7 +1028,6 @@ namespace Jmon_Switcher
             Update_Chroma_Text_Value();
 
         }//ok
-
         private void Chroma_YSup_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             //Y Suppress
@@ -1047,7 +1036,6 @@ namespace Jmon_Switcher
             Update_Chroma_Text_Value();
 
         }//ok
-
         private void Chroma_Lift_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             //Lift
@@ -1070,7 +1058,6 @@ namespace Jmon_Switcher
 
             return retVal;
         } //ok  (0 <= val <= 360)
-
         int SetChromaGain(double val)
         {
             int retVal = -1;
@@ -1085,7 +1072,6 @@ namespace Jmon_Switcher
 
             return retVal;
         }//ok  (0 <= val <= 1)
-
         int SetChromaYSup(double val)
         {
             int retVal = -1;
@@ -1100,7 +1086,6 @@ namespace Jmon_Switcher
 
             return retVal;
         }//ok  (0 <= val <= 1)
-
         int SetChromaLift(double val)
         {
             int retVal = -1;
@@ -1115,8 +1100,6 @@ namespace Jmon_Switcher
 
             return retVal;
         }//ok  (0 <= val <= 1)
-
-
 
         private void chroma_key_combo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -1134,7 +1117,7 @@ namespace Jmon_Switcher
             switch(int.Parse(button.Tag.ToString()))
             {
                 case 1: //magenta
-                    SetChromaHue(322);
+                    SetChromaHue(326);
                     SetChromaGain(0.57); 
                     SetChromaYSup(0.48); 
                     SetChromaLift(0.114);
@@ -1163,7 +1146,6 @@ namespace Jmon_Switcher
             Update_Chroma_Slider_Value();
             Update_Chroma_Text_Value();
         } //ok
-
         private void On_Air_Btn_Click(object sender, RoutedEventArgs e)
         {
             if (m_switcher_key != null)
@@ -1173,6 +1155,7 @@ namespace Jmon_Switcher
                 if (is_set_on_air == 0)
                 {
                     m_switcher_key.SetOnAir(1);
+                    m_switcher_key.SetType(_BMDSwitcherKeyType.bmdSwitcherKeyTypeChroma);
                     on_air_Btn.Background = Brushes.Red;
                 }
                 else
@@ -1182,7 +1165,6 @@ namespace Jmon_Switcher
                 }
             }
         } //ok
-
         private void Play_Btn_Click(object sender, RoutedEventArgs e)
         {
             //적용 버튼 인듯. 변경만,
@@ -1193,13 +1175,11 @@ namespace Jmon_Switcher
             cw.Set_Background(Canvas_Chroma_preview.Background);
             cw.Set_VerticalAlignment(Caption_main.VerticalContentAlignment);
         } //ok
-
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             TextBox tb = sender as TextBox;
             Caption_main.Text = tb.Text;
         } //ok
-
         private void text_location_Btn_Click(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
@@ -1210,17 +1190,40 @@ namespace Jmon_Switcher
                 case "3": Caption_main.VerticalContentAlignment = VerticalAlignment.Bottom; break;//하단 
             }
         } //ok
-
         private void Font_Family_Change_Btn_Click(object sender, RoutedEventArgs e)
         {
             Button b = sender as Button;
-            Caption_main.FontFamily = b.FontFamily;
-        } //ok
 
+            f1.Background = Brushes.LightGray;
+            f2.Background = Brushes.LightGray;
+            f3.Background = Brushes.LightGray;
+            f4.Background = Brushes.LightGray;
+            f5.Background = Brushes.LightGray;
+            f6.Background = Brushes.LightGray;
+
+            
+            switch (b.Tag)
+            {
+                case "1": Caption_main.FontFamily = b.FontFamily; f1.Background = Brushes.LightGreen; break;
+                case "2": Caption_main.FontFamily = b.FontFamily; f2.Background = Brushes.LightGreen; break;
+                case "3": Caption_main.FontFamily = b.FontFamily; f3.Background = Brushes.LightGreen; break;
+                case "4": Caption_main.FontFamily = b.FontFamily; f4.Background = Brushes.LightGreen; break;
+                case "5": Caption_main.FontFamily = b.FontFamily; f5.Background = Brushes.LightGreen; break;
+                case "6": Caption_main.FontFamily = b.FontFamily; f6.Background = Brushes.LightGreen; break;
+
+
+            }
+        } //ok
         private void Size_Change_Btn_Click(object sender, RoutedEventArgs e)
         {
             Button b = sender as Button;
-            fsize_1.Background = fsize_2.Background = fsize_3.Background = fsize_4.Background = fsize_5.Background = Brushes.LightGray;
+            fsize_1.Background = Brushes.LightGray;
+            fsize_2.Background = Brushes.LightGray;
+            fsize_3.Background = Brushes.LightGray;
+            fsize_4.Background = Brushes.LightGray;
+            fsize_5.Background = Brushes.LightGray;
+            fsize_6.Background = Brushes.LightGray;
+
             switch (b.Tag)
             {
                 case "1": Caption_main.FontSize = 30; fsize_1.Background = Brushes.LightGreen; break;
@@ -1228,10 +1231,11 @@ namespace Jmon_Switcher
                 case "3": Caption_main.FontSize = 50; fsize_3.Background = Brushes.LightGreen; break;
                 case "4": Caption_main.FontSize = 60; fsize_4.Background = Brushes.LightGreen; break;
                 case "5": Caption_main.FontSize = 70; fsize_5.Background = Brushes.LightGreen; break;
+                case "6": Caption_main.FontSize = 80; fsize_6.Background = Brushes.LightGreen; break;
+
 
             }
         } //ok
-
         private void Color_Change_Btn_Click(object sender, RoutedEventArgs e)
         {
             //글씨 색 바꾸는 것.
@@ -1240,12 +1244,6 @@ namespace Jmon_Switcher
             Caption_main.Foreground = br;
 
         } //ok
-
-        private void Get_From_PPT(object sender, RoutedEventArgs e)
-        {
-
-        } 
-
         private void combo_screen_index_selector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             //표시할 디스플레이 선택 변화
@@ -1255,8 +1253,14 @@ namespace Jmon_Switcher
                 cw.Set_Screen_Index(int.Parse(cb.SelectedValue.ToString()));
                 cw.Show_window_at_Screen_Index();
             }
+            if(ppt != null)
+            {
+                ppt.Set_PPT_Screen_Index(int.Parse(cb.SelectedValue.ToString())); //변수 넣어주고
+                ppt.Show_ppt_at_Screen_Index(); //실행
+            }
         } //ok
 
+        //callback
         private void Chroma_Hue_Changed_Callback()
         {
             //스위쳐에서 Hue값이 변경되면 실행됨.
@@ -1313,7 +1317,44 @@ namespace Jmon_Switcher
 
         #endregion
 
+        #region PowerPoint
 
+        private void Activate_PPT_Mode(object sender, RoutedEventArgs e)
+        {
+            //ppt 모드 활성화
+            if (ppt.Load_File()) //성공시
+            {
+                ppt.Show();
+                cw.Visibility = Visibility.Hidden;
+                PPT_Grid.Visibility = Visibility.Visible;
+                ppt_mode_Btn.Background = Brushes.Bisque;
+                ppt_mode_Btn.IsEnabled = false;
+            }
+        }
 
+        private void PPT_next_Click(object sender, RoutedEventArgs e)
+        {
+            ppt.Next();
+        }
+
+        private void PPT_prev_Click(object sender, RoutedEventArgs e)
+        {
+            ppt.Prev();
+        }
+
+        private void PPT_add_slide_Click(object sender, RoutedEventArgs e)
+        {
+            ppt.Test_addNewPage();
+        }
+        private void PPT_exit_Click(object sender, RoutedEventArgs e)
+        {
+            ppt.Close();
+            cw.Visibility = Visibility.Visible;
+            PPT_Grid.Visibility = Visibility.Hidden;
+            ppt_mode_Btn.Background = Brushes.DimGray;
+            ppt_mode_Btn.IsEnabled = true;
+        }
+
+        #endregion
     }
 }

@@ -21,20 +21,20 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <!--상단 로고, 메뉴, 기능 바-->
-        <Grid Grid.Row="0" Background="LightGray" Grid.ColumnSpan="2">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="5" >
-                <Image Source="/Resources/logo.png" />
-                <Label x:Name="textBoxSwitcherName" Content="Video Switcher for JHD-3000" FontSize="30" FontWeight="Bold" Background="Transparent" VerticalAlignment="Bottom"/>
+        <Grid Grid.Row="0" Background="#3F3F3F" Grid.ColumnSpan="2">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="15 5 15 5" >
+                <Image Source="/Resources/logo2.png"/>
+                <Label x:Name="textBoxSwitcherName" Content=" JHD-3000 Video Switcher" FontSize="25" FontWeight="Bold" Background="Transparent" VerticalAlignment="Center"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                <Label Content="IP Address :" VerticalContentAlignment="Center" Foreground="Black" FontSize="20"/>
+                <Label Content="IP Address :" VerticalContentAlignment="Center" Foreground="White" FontSize="20"/>
                 <TextBox x:Name="IP_Textbox" Width="200" Background="White" Margin="10" VerticalContentAlignment="Center" TextAlignment="Center" FontSize="18"/>
                 <Button x:Name="IP_connect" Content="연결" Margin="10" Click="IP_connect_Click"/>
                 <Button x:Name="Shutdown" Content="종료" Margin="10" Click="Shutdown_Click"/>
             </StackPanel>
         </Grid>
         <!--비디오 스위칭, 오디오 스위칭 메인 기능-->
-        <Grid Grid.Row="1" Background="Wheat" x:Name="Video_Grid" IsEnabled="False">
+        <Grid Grid.Row="1" Background="#3F3F3F" x:Name="Video_Grid" IsEnabled="False">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="810"/>
                 <ColumnDefinition Width="80"/>
@@ -46,9 +46,9 @@
                 <RowDefinition Height="4*"/>
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0" Grid.ColumnSpan="3" Background="DarkGray"/>
-            <Grid Grid.Row="1" Grid.ColumnSpan="3" Background="Gray"/>
-            <Grid Grid.Row="2" Grid.ColumnSpan="3" Background="DimGray"/>
+            <Grid Grid.Row="0" Grid.ColumnSpan="3" Background="#3F3F3F"/>
+            <Grid Grid.Row="1" Grid.ColumnSpan="3" Background="#3F3F3F"/>
+            <Grid Grid.Row="2" Grid.ColumnSpan="3" Background="#3F3F3F"/>
 
             <Grid Grid.Row="0" >
                 <Grid.RowDefinitions>
@@ -56,16 +56,16 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <!--program input-->
-                <Label Grid.Row="0" Content="Program input" FontSize="20" HorizontalAlignment="Left" Background="Transparent"/>
+                <Label Grid.Row="0" Content="Program" FontSize="20" HorizontalAlignment="Left" Background="Transparent"/>
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Height="80" >
-                    <Button x:Name="prog_Btn_1" Tag="Camera 1" Content="{materialDesign:PackIcon Kind=Numeric1, Size=50}" Margin="5" Click="Button_Click_Program" Width="90" Height="70"/>
-                    <Button x:Name="prog_Btn_2" Tag="Camera 2" Content="{materialDesign:PackIcon Kind=Numeric2, Size=50}" Margin="5" Click="Button_Click_Program" Width="90" Height="70"/>
-                    <Button x:Name="prog_Btn_3" Tag="Camera 3" Content="{materialDesign:PackIcon Kind=Numeric3, Size=50}" Margin="5" Click="Button_Click_Program" Width="90" Height="70"/>
-                    <Button x:Name="prog_Btn_4" Tag="Camera 4" Content="{materialDesign:PackIcon Kind=Numeric4, Size=50}" Margin="5" Click="Button_Click_Program" Width="90" Height="70"/>
-                    <Button x:Name="prog_Btn_5" Tag="Camera 5" Content="{materialDesign:PackIcon Kind=Numeric5, Size=50}" Margin="5" Click="Button_Click_Program" Width="90" Height="70"/>
-                    <Button x:Name="prog_Btn_6" Tag="Camera 6" Content="{materialDesign:PackIcon Kind=Numeric6, Size=50}" Margin="5" Click="Button_Click_Program" Width="90" Height="70"/>
-                    <Button x:Name="prog_Btn_7" Tag="Camera 7" Content="{materialDesign:PackIcon Kind=Numeric7, Size=50}" Margin="5" Click="Button_Click_Program" Width="90" Height="70"/>
-                    <Button x:Name="prog_Btn_8" Tag="Camera 8" Content="{materialDesign:PackIcon Kind=Numeric8, Size=50}" Margin="5" Click="Button_Click_Program" Width="90" Height="70"/>
+                    <Button x:Name="prog_Btn_1" Tag="Camera 1" Content="{materialDesign:PackIcon Kind=Numeric1, Size=50}" Margin="5" Click="Button_Click_Program" Width="90" Height="70" Background="LightGray"/>
+                    <Button x:Name="prog_Btn_2" Tag="Camera 2" Content="{materialDesign:PackIcon Kind=Numeric2, Size=50}" Margin="5" Click="Button_Click_Program" Width="90" Height="70" Background="LightGray"/>
+                    <Button x:Name="prog_Btn_3" Tag="Camera 3" Content="{materialDesign:PackIcon Kind=Numeric3, Size=50}" Margin="5" Click="Button_Click_Program" Width="90" Height="70" Background="LightGray"/>
+                    <Button x:Name="prog_Btn_4" Tag="Camera 4" Content="{materialDesign:PackIcon Kind=Numeric4, Size=50}" Margin="5" Click="Button_Click_Program" Width="90" Height="70" Background="LightGray"/>
+                    <Button x:Name="prog_Btn_5" Tag="Camera 5" Content="{materialDesign:PackIcon Kind=Numeric5, Size=50}" Margin="5" Click="Button_Click_Program" Width="90" Height="70" Background="LightGray"/>
+                    <Button x:Name="prog_Btn_6" Tag="Camera 6" Content="{materialDesign:PackIcon Kind=Numeric6, Size=50}" Margin="5" Click="Button_Click_Program" Width="90" Height="70" Background="LightGray"/>
+                    <Button x:Name="prog_Btn_7" Tag="Camera 7" Content="{materialDesign:PackIcon Kind=Numeric7, Size=50}" Margin="5" Click="Button_Click_Program" Width="90" Height="70" Background="LightGray"/>
+                    <Button x:Name="prog_Btn_8" Tag="Camera 8" Content="{materialDesign:PackIcon Kind=Numeric8, Size=50}" Margin="5" Click="Button_Click_Program" Width="90" Height="70" Background="LightGray"/>
                 </StackPanel>
             </Grid>
             <Grid Grid.Row="1">
@@ -74,16 +74,16 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <!--preview input-->
-                <Label Grid.Row="0" Content="Preview input" FontSize="20" HorizontalAlignment="Left" Background="Transparent"/>
+                <Label Grid.Row="0" Content="Preview" FontSize="20" HorizontalAlignment="Left" Background="Transparent"/>
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Height="80" >
-                    <Button x:Name="prev_Btn_1" Tag="Camera 1" Content="{materialDesign:PackIcon Kind=Numeric1, Size=50}" Margin="5" Click="Button_Click_Preview" Width="90" Height="70"/>
-                    <Button x:Name="prev_Btn_2" Tag="Camera 2" Content="{materialDesign:PackIcon Kind=Numeric2, Size=50}" Margin="5" Click="Button_Click_Preview" Width="90" Height="70"/>
-                    <Button x:Name="prev_Btn_3" Tag="Camera 3" Content="{materialDesign:PackIcon Kind=Numeric3, Size=50}" Margin="5" Click="Button_Click_Preview" Width="90" Height="70"/>
-                    <Button x:Name="prev_Btn_4" Tag="Camera 4" Content="{materialDesign:PackIcon Kind=Numeric4, Size=50}" Margin="5" Click="Button_Click_Preview" Width="90" Height="70"/>
-                    <Button x:Name="prev_Btn_5" Tag="Camera 5" Content="{materialDesign:PackIcon Kind=Numeric5, Size=50}" Margin="5" Click="Button_Click_Preview" Width="90" Height="70"/>
-                    <Button x:Name="prev_Btn_6" Tag="Camera 6" Content="{materialDesign:PackIcon Kind=Numeric6, Size=50}" Margin="5" Click="Button_Click_Preview" Width="90" Height="70"/>
-                    <Button x:Name="prev_Btn_7" Tag="Camera 7" Content="{materialDesign:PackIcon Kind=Numeric7, Size=50}" Margin="5" Click="Button_Click_Preview" Width="90" Height="70"/>
-                    <Button x:Name="prev_Btn_8" Tag="Camera 8" Content="{materialDesign:PackIcon Kind=Numeric8, Size=50}" Margin="5" Click="Button_Click_Preview" Width="90" Height="70"/>
+                    <Button x:Name="prev_Btn_1" Tag="Camera 1" Content="{materialDesign:PackIcon Kind=Numeric1, Size=50}" Margin="5" Click="Button_Click_Preview" Width="90" Height="70" Background="LightGray"/>
+                    <Button x:Name="prev_Btn_2" Tag="Camera 2" Content="{materialDesign:PackIcon Kind=Numeric2, Size=50}" Margin="5" Click="Button_Click_Preview" Width="90" Height="70" Background="LightGray"/>
+                    <Button x:Name="prev_Btn_3" Tag="Camera 3" Content="{materialDesign:PackIcon Kind=Numeric3, Size=50}" Margin="5" Click="Button_Click_Preview" Width="90" Height="70" Background="LightGray"/>
+                    <Button x:Name="prev_Btn_4" Tag="Camera 4" Content="{materialDesign:PackIcon Kind=Numeric4, Size=50}" Margin="5" Click="Button_Click_Preview" Width="90" Height="70" Background="LightGray"/>
+                    <Button x:Name="prev_Btn_5" Tag="Camera 5" Content="{materialDesign:PackIcon Kind=Numeric5, Size=50}" Margin="5" Click="Button_Click_Preview" Width="90" Height="70" Background="LightGray"/>
+                    <Button x:Name="prev_Btn_6" Tag="Camera 6" Content="{materialDesign:PackIcon Kind=Numeric6, Size=50}" Margin="5" Click="Button_Click_Preview" Width="90" Height="70" Background="LightGray"/>
+                    <Button x:Name="prev_Btn_7" Tag="Camera 7" Content="{materialDesign:PackIcon Kind=Numeric7, Size=50}" Margin="5" Click="Button_Click_Preview" Width="90" Height="70" Background="LightGray"/>
+                    <Button x:Name="prev_Btn_8" Tag="Camera 8" Content="{materialDesign:PackIcon Kind=Numeric8, Size=50}" Margin="5" Click="Button_Click_Preview" Width="90" Height="70" Background="LightGray"/>
                 </StackPanel>
             </Grid>
 
@@ -96,7 +96,7 @@
                     <RowDefinition Height="3*"/>
                 </Grid.RowDefinitions>
                 <!--오디오 버튼-->
-                <Label Grid.Row="0" Content="Audio input" FontSize="20" HorizontalAlignment="Left" Background="Transparent"/>
+                <Label Grid.Row="0" Content="Audio" FontSize="20" HorizontalAlignment="Left" Background="Transparent"/>
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Height="35">
 
                     <local:_3state_toggle_button x:Name="audio_Btn_1" Tag="1" Margin="5 0 5 0" Width="90" />
@@ -107,16 +107,7 @@
                     <local:_3state_toggle_button x:Name="audio_Btn_6" Tag="6" Margin="5 0 5 0" Width="90"/>
                     <local:_3state_toggle_button x:Name="audio_Btn_7" Tag="7" Margin="5 0 5 0" Width="90"/>
                     <local:_3state_toggle_button x:Name="audio_Btn_8" Tag="8" Margin="5 0 5 0" Width="90"/>
-                    <!--
-                    <Button x:Name="audio_Btn_1" Tag="1" Content="{materialDesign:PackIcon Kind=Numeric1, Size=30}" Margin="5 0 5 0" Click="Button_Click_Audio" Width="90"/>
-                    <Button x:Name="audio_Btn_2" Tag="2" Content="{materialDesign:PackIcon Kind=Numeric2, Size=30}" Margin="5 0 5 0" Click="Button_Click_Audio" Width="90"/>
-                    <Button x:Name="audio_Btn_3" Tag="3" Content="{materialDesign:PackIcon Kind=Numeric3, Size=30}" Margin="5 0 5 0" Click="Button_Click_Audio" Width="90"/>
-                    <Button x:Name="audio_Btn_4" Tag="4" Content="{materialDesign:PackIcon Kind=Numeric4, Size=30}" Margin="5 0 5 0" Click="Button_Click_Audio" Width="90"/>
-                    <Button x:Name="audio_Btn_5" Tag="5" Content="{materialDesign:PackIcon Kind=Numeric5, Size=30}" Margin="5 0 5 0" Click="Button_Click_Audio" Width="90"/>
-                    <Button x:Name="audio_Btn_6" Tag="6" Content="{materialDesign:PackIcon Kind=Numeric6, Size=30}" Margin="5 0 5 0" Click="Button_Click_Audio" Width="90"/>
-                    <Button x:Name="audio_Btn_7" Tag="7" Content="{materialDesign:PackIcon Kind=Numeric7, Size=30}" Margin="5 0 5 0" Click="Button_Click_Audio" Width="90"/>
-                    <Button x:Name="audio_Btn_8" Tag="8" Content="{materialDesign:PackIcon Kind=Numeric8, Size=30}" Margin="5 0 5 0" Click="Button_Click_Audio" Width="90"/>
-                    -->
+                    
 
                 </StackPanel>
                 <!--오디오 가로 슬라이드바 : 좌우 대칭-->
@@ -184,20 +175,20 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Background="Transparent">
-                    <Label Content="black" Width="70" HorizontalContentAlignment="Center" Margin="5" Background="Transparent"/>
-                    <Label Content="bars" Width="70" HorizontalContentAlignment="Center" Margin="5" Background="Transparent"/>
-                    <Label Content="color1" Width="70" HorizontalContentAlignment="Center" Margin="5" Background="Transparent"/>
-                    <Label Content="color2" Width="70" HorizontalContentAlignment="Center" Margin="5" Background="Transparent"/>
-                    <Label Content="media1" Width="70" HorizontalContentAlignment="Center" Margin="5" Background="Transparent"/>
-                    <Label Content="media2" Width="70" HorizontalContentAlignment="Center" Margin="5" Background="Transparent"/>
+                    <Label Content="●" Width="70" HorizontalContentAlignment="Center" Margin="5" Background="Transparent"/>
+                    <Label Content="●" Width="70" HorizontalContentAlignment="Center" Margin="5" Background="Transparent"/>
+                    <Label Content="●" Width="70" HorizontalContentAlignment="Center" Margin="5" Background="Transparent"/>
+                    <Label Content="●" Width="70" HorizontalContentAlignment="Center" Margin="5" Background="Transparent"/>
+                    <Label Content="●" Width="70" HorizontalContentAlignment="Center" Margin="5" Background="Transparent"/>
+                    <Label Content="●" Width="70" HorizontalContentAlignment="Center" Margin="5" Background="Transparent"/>
                 </StackPanel>
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Height="80">
-                    <Button x:Name="Black_program" Tag="Black" Margin="5" Click="Button_Click_Program" Width="70" Height="70"/>
-                    <Button x:Name="Bar_program" Tag="Color Bars" Margin="5" Click="Button_Click_Program" Width="70" Height="70"/>
-                    <Button x:Name="Color_program_1" Tag="Color 1" Margin="5" Click="Button_Click_Program" Width="70" Height="70"/>
-                    <Button x:Name="Color_program_2" Tag="Color 2" Margin="5" Click="Button_Click_Program" Width="70" Height="70"/>
-                    <Button x:Name="Media_program_1" Tag="Media Player 1" Margin="5" Click="Button_Click_Program" Width="70" Height="70"/>
-                    <Button x:Name="Media_program_2" Tag="Media Player 2" Margin="5" Click="Button_Click_Program" Width="70" Height="70"/>
+                    <Button x:Name="Black_program"   Content="Black"  Tag="Black"           Margin="5" Padding="0" FontWeight="Bold" Click="Button_Click_Program" Width="70" Height="70" Background="LightGray"/>
+                    <Button x:Name="Bar_program"     Content="Bars"   Tag="Color Bars"      Margin="5" Padding="0" FontWeight="Bold" Click="Button_Click_Program" Width="70" Height="70" Background="LightGray"/>
+                    <Button x:Name="Color_program_1" Content="Color1" Tag="Color 1"         Margin="5" Padding="0" FontWeight="Bold" Click="Button_Click_Program" Width="70" Height="70" Background="LightGray"/>
+                    <Button x:Name="Color_program_2" Content="Color2" Tag="Color 2"         Margin="5" Padding="0" FontWeight="Bold" Click="Button_Click_Program" Width="70" Height="70" Background="LightGray"/>
+                    <Button x:Name="Media_program_1" Content="Media1" Tag="Media Player 1"  Margin="5" Padding="0" FontWeight="Bold" Click="Button_Click_Program" Width="70" Height="70" Background="LightGray"/>
+                    <Button x:Name="Media_program_2" Content="Media2" Tag="Media Player 2"  Margin="5" Padding="0" FontWeight="Bold" Click="Button_Click_Program" Width="70" Height="70" Background="LightGray"/>
                 </StackPanel>
             </Grid>
 
@@ -208,20 +199,20 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                    <Label Content="black" Width="70" HorizontalContentAlignment="Center" Margin="5" Background="Transparent"/>
-                    <Label Content="bars" Width="70" HorizontalContentAlignment="Center" Margin="5" Background="Transparent"/>
-                    <Label Content="color1" Width="70" HorizontalContentAlignment="Center" Margin="5" Background="Transparent"/>
-                    <Label Content="color2" Width="70" HorizontalContentAlignment="Center" Margin="5" Background="Transparent"/>
-                    <Label Content="media1" Width="70" HorizontalContentAlignment="Center" Margin="5" Background="Transparent"/>
-                    <Label Content="media2" Width="70" HorizontalContentAlignment="Center" Margin="5" Background="Transparent"/>
+                    <Label Content="●" Width="70" HorizontalContentAlignment="Center" Margin="5" Background="Transparent"/>
+                    <Label Content="●" Width="70" HorizontalContentAlignment="Center" Margin="5" Background="Transparent"/>
+                    <Label Content="●" Width="70" HorizontalContentAlignment="Center" Margin="5" Background="Transparent"/>
+                    <Label Content="●" Width="70" HorizontalContentAlignment="Center" Margin="5" Background="Transparent"/>
+                    <Label Content="●" Width="70" HorizontalContentAlignment="Center" Margin="5" Background="Transparent"/>
+                    <Label Content="●" Width="70" HorizontalContentAlignment="Center" Margin="5" Background="Transparent"/>
                 </StackPanel>
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Height="80">
-                    <Button x:Name="Black_preview" Tag="Black" Margin="5" Click="Button_Click_Preview" Width="70" Height="70"/>
-                    <Button x:Name="Bar_preview" Tag="Color Bars" Margin="5" Click="Button_Click_Preview" Width="70" Height="70"/>
-                    <Button x:Name="Color_preview_1" Tag="Color 1" Margin="5" Click="Button_Click_Preview" Width="70" Height="70"/>
-                    <Button x:Name="Color_preview_2" Tag="Color 2" Margin="5" Click="Button_Click_Preview" Width="70" Height="70"/>
-                    <Button x:Name="Media_preview_1" Tag="Media Player 1" Margin="5" Click="Button_Click_Preview" Width="70" Height="70"/>
-                    <Button x:Name="Media_preview_2" Tag="Media Player 2" Margin="5" Click="Button_Click_Preview" Width="70" Height="70"/>
+                    <Button x:Name="Black_preview"   Content="Black"  Tag="Black"          Margin="5" Padding="0" FontWeight="Bold" Click="Button_Click_Preview" Width="70" Height="70" Background="LightGray"/>
+                    <Button x:Name="Bar_preview"     Content="Bars"   Tag="Color Bars"     Margin="5" Padding="0" FontWeight="Bold" Click="Button_Click_Preview" Width="70" Height="70" Background="LightGray"/>
+                    <Button x:Name="Color_preview_1" Content="Color1" Tag="Color 1"        Margin="5" Padding="0" FontWeight="Bold" Click="Button_Click_Preview" Width="70" Height="70" Background="LightGray"/>
+                    <Button x:Name="Color_preview_2" Content="Color2" Tag="Color 2"        Margin="5" Padding="0" FontWeight="Bold" Click="Button_Click_Preview" Width="70" Height="70" Background="LightGray"/>
+                    <Button x:Name="Media_preview_1" Content="Media1" Tag="Media Player 1" Margin="5" Padding="0" FontWeight="Bold" Click="Button_Click_Preview" Width="70" Height="70" Background="LightGray"/>
+                    <Button x:Name="Media_preview_2" Content="Media2" Tag="Media Player 2" Margin="5" Padding="0" FontWeight="Bold" Click="Button_Click_Preview" Width="70" Height="70" Background="LightGray"/>
                 </StackPanel>
             </Grid>
 
@@ -235,7 +226,7 @@
                     <RowDefinition Height="3*"/>
                 </Grid.RowDefinitions>
 
-                <Label Grid.Row="0" Content="Audio input" FontSize="20" HorizontalAlignment="Left" Background="Transparent"/>
+                <Label Grid.Row="0" Content="" FontSize="20" HorizontalAlignment="Left" Background="Transparent"/>
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Height="35">
 
                     <Button x:Name="EXT_Btn" Content="external" Margin="5 0 5 0" Click="EXT_Btn_Click" Width="90"/>
@@ -264,7 +255,7 @@
         </Grid>
 
 
-        <Grid Grid.Row="1" Grid.Column="1" Background="#5f5f5f" x:Name="Transition_Grid" IsEnabled="False">
+        <Grid Grid.Row="1" Grid.Column="1" Background="#3f3f3f" x:Name="Transition_Grid" IsEnabled="False">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*"/>
                 <ColumnDefinition Width="*"/>
@@ -276,32 +267,35 @@
                     <RowDefinition Height="100"/>
                 </Grid.RowDefinitions>
 
-                <Label Content="트랜지션" Background="Transparent" />
+                <Label Content="Transition" Background="Transparent" Foreground="White" VerticalContentAlignment="Center" FontSize="20" HorizontalAlignment="Center"/>
 
-                <UniformGrid Grid.Row="1" Rows="5" Columns="2" Margin="20" Background="#BFBFBF">
-                    <Button x:Name="transition_1"  Content="normal"     Tag="0"  Margin="10" Click="Transition_Btn_Click"/>
-                    <Button x:Name="transition_2"  Content="vert"       Tag="1"  Margin="10" Click="Transition_Btn_Click"/>
-                    <Button x:Name="transition_3"  Content="hori"       Tag="2"  Margin="10" Click="Transition_Btn_Click"/>
-                    <Button x:Name="transition_4"  Content="center in"  Tag="3"  Margin="10" Click="Transition_Btn_Click"/>
-                    <Button x:Name="transition_5"  Content="center out" Tag="4"  Margin="10" Click="Transition_Btn_Click"/>
-                    <Button x:Name="transition_6"  Content="cen_vert"   Tag="5"  Margin="10" Click="Transition_Btn_Click"/>
-                    <Button x:Name="transition_7"  Content="cen_hori"   Tag="6"  Margin="10" Click="Transition_Btn_Click"/>
-                    <Button x:Name="transition_8"  Content="diamond"    Tag="7"  Margin="10" Click="Transition_Btn_Click"/>
-                    <Button x:Name="transition_9"  Content="diagonal"   Tag="8"  Margin="10" Click="Transition_Btn_Click"/>
-                    <Button x:Name="transition_10" Content="diagonal_"  Tag="9"  Margin="10" Click="Transition_Btn_Click"/>
+                <Border Grid.Row="1" CornerRadius="20" Padding="0" Margin="10" Background="#2f2f2f">
 
-                </UniformGrid>
+                    <UniformGrid Rows="5" Columns="2" Margin="10" >
+                        <Button x:Name="transition_1"  Content="NORMAL"             Tag="0" Height="40" Margin="5" Click="Transition_Btn_Click" Background="LightGray" Padding="0"/>
+                        <Button x:Name="transition_2"  Content="VERTICAL"           Tag="1" Height="40" Margin="5" Click="Transition_Btn_Click" Background="LightGray" Padding="0"/>
+                        <Button x:Name="transition_3"  Content="HORIZONTAL"         Tag="2" Height="40" Margin="5" Click="Transition_Btn_Click" Background="LightGray" Padding="0"/>
+                        <Button x:Name="transition_4"  Content="CENTER IN"          Tag="3" Height="40" Margin="5" Click="Transition_Btn_Click" Background="LightGray" Padding="0"/>
+                        <Button x:Name="transition_5"  Content="CENTER OUT"         Tag="4" Height="40" Margin="5" Click="Transition_Btn_Click" Background="LightGray" Padding="0"/>
+                        <Button x:Name="transition_6"  Content="CENTER VERTICAL"    Tag="5" Height="40" Margin="5" Click="Transition_Btn_Click" Background="LightGray" Padding="0"/>
+                        <Button x:Name="transition_7"  Content="CENTER HORIZONTAL"  Tag="6" Height="40" Margin="5" Click="Transition_Btn_Click" Background="LightGray" Padding="0"/>
+                        <Button x:Name="transition_8"  Content="DIAMOND"            Tag="7" Height="40" Margin="5" Click="Transition_Btn_Click" Background="LightGray" Padding="0"/>
+                        <Button x:Name="transition_9"  Content="DIAGONAL1"          Tag="8" Height="40" Margin="5" Click="Transition_Btn_Click" Background="LightGray" Padding="0"/>
+                        <Button x:Name="transition_10" Content="DIAGONAL2"          Tag="9" Height="40" Margin="5" Click="Transition_Btn_Click" Background="LightGray" Padding="0"/>
+
+                    </UniformGrid>
+                </Border>
 
                 <Grid Grid.Row="2">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <Button x:Name="buttonCut" Content="cut" Width="80" Height="80" Margin="10" Click="buttonCut_Click">
+                        <Button x:Name="buttonCut" Content="{materialDesign:PackIcon Kind=Scissors, Size=30}" Width="80" Height="80" Margin="10" Click="buttonCut_Click">
                             <Button.Resources>
                                 <Style TargetType="Border">
                                     <Setter Property="CornerRadius" Value="50"/>
                                 </Style>
                             </Button.Resources>
                         </Button>
-                        <Button x:Name="buttonAuto" Content="auto" Width="80" Height="80" Margin="10" Click="buttonAuto_Click">
+                        <Button x:Name="buttonAuto" Content="{materialDesign:PackIcon Kind=Autorenew, Size=32}" Width="80" Height="80" Margin="10" Click="buttonAuto_Click">
                             <Button.Resources>
                                 <Style TargetType="Border">
                                     <Setter Property="CornerRadius" Value="50"/>
@@ -337,33 +331,36 @@
                 </Grid.RowDefinitions>
 
                 <Grid Grid.Column="0" Grid.Row="0" Width="640" Height="400" >
-                    <Canvas x:Name="Canvas_Chroma_preview" Background="Magenta">
-                        
+                    <Canvas x:Name="Canvas_Chroma_preview" Background="#FF09E2">
                         <TextBox x:Name="Caption_main" Width="{Binding ElementName=Canvas_Chroma_preview, Path=ActualWidth}" Height="{Binding ElementName=Canvas_Chroma_preview, Path=ActualHeight}" 
-                                 Text="진명아이앤씨" IsReadOnly="True" VerticalContentAlignment="Bottom" TextAlignment="Center" FontSize="40"/>
+                                 IsReadOnly="True" VerticalContentAlignment="Bottom" TextAlignment="Center" FontSize="30" FontFamily="돋움"/>
                     </Canvas>
-                        
+                    <Grid x:Name="PowerPointViewer" Background="Transparent" />
                 </Grid>
 
-                <UniformGrid Grid.Row="1" Columns="3">
-                    <Button Width="100" Height="70" Content="play" Click="Play_Btn_Click" Background="LightGray"/>
-                    <Button x:Name="on_air_Btn" Width="100" Height="70" Content="on air" Click="On_Air_Btn_Click" Background="LightGray"/>
-                    <Button Width="100" Height="70" Content="text flow" Click="Get_From_PPT" Background="LightGray"/>
+                <UniformGrid Grid.Row="1" Columns="3"> 
+                    <Button Width="100" Height="70" Content="{materialDesign:PackIcon Kind=ApplicationImport, Size=40}" Click="Play_Btn_Click" Background="LightGray"/>
+                    <Button x:Name="on_air_Btn" Width="100" Height="70" Content="{materialDesign:PackIcon Kind=Broadcast, Size=40}" Click="On_Air_Btn_Click" Background="LightGray"/>
+                    <Button x:Name="ppt_mode_Btn" Width="100" Height="70" Content="{materialDesign:PackIcon Kind=MicrosoftPowerpoint, Size=40}" Click="Activate_PPT_Mode" Background="LightGray"/>
                 </UniformGrid>
                 <UniformGrid Grid.Column="1" Rows="3">
-                    <Button Width="100" Height="70" Content="상" Tag="1" Margin="5" Click="text_location_Btn_Click"/>
-                    <Button Width="100" Height="70" Content="중" Tag="2" Margin="5" Click="text_location_Btn_Click"/>
-                    <Button Width="100" Height="70" Content="하" Tag="3" Margin="5" Click="text_location_Btn_Click"/>
+                    <Button Height="70" Content="상" Tag="1" Margin="5" Click="text_location_Btn_Click" FontSize="20" FontWeight="Bold"/>
+                    <Button Height="70" Content="중" Tag="2" Margin="5" Click="text_location_Btn_Click" FontSize="20" FontWeight="Bold"/>
+                    <Button Height="70" Content="하" Tag="3" Margin="5" Click="text_location_Btn_Click" FontSize="20" FontWeight="Bold"/>
+                </UniformGrid>
+                <UniformGrid x:Name="PPT_Grid" Grid.Column="1" Background="Bisque" Visibility="Hidden" Columns="1">
+                    <Button x:Name="PPT_next" Height="40" Content="{materialDesign:PackIcon Kind=PageNextOutline}" Padding="0" Margin="5" Click="PPT_next_Click"/>
+                    <Button x:Name="PPT_prev" Height="40" Content="{materialDesign:PackIcon Kind=PagePreviousOutline}" Padding="0" Margin="5" Click="PPT_prev_Click"/>
+                    <Button x:Name="PPT_add" Height="40" Content="{materialDesign:PackIcon Kind=NotePlusOutline}" Padding="0" Margin="5" Click="PPT_add_slide_Click"/>
+                    <Button x:Name="PPT_exit" Height="40" Content="{materialDesign:PackIcon Kind=CloseBoxMultipleOutline}" Padding="0" Margin="5" Click="PPT_exit_Click"/>
                 </UniformGrid>
 
                 <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <TextBlock Text="스크린 출력" Foreground="White" HorizontalAlignment="Center"/>
-                    
+                    <materialDesign:PackIcon Kind="MonitorMultiple" HorizontalAlignment="Center" Width="30" Height="30" Foreground="LightGray"/>
                     <ComboBox x:Name="combo_screen_index_selector" Width="80" Background="AliceBlue" SelectedIndex="1" SelectionChanged="combo_screen_index_selector_SelectionChanged" SelectedValuePath="Tag">
                         <ComboBoxItem Content="1" Tag="0"/>
                         <ComboBoxItem Content="2" Tag="1"/>
                         <ComboBoxItem Content="3" Tag="2"/>
-                        <ComboBoxItem Content="4" Tag="3"/>
                     </ComboBox>
                 </StackPanel>
                 
@@ -372,60 +369,96 @@
 
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="80"/>
+                    <RowDefinition Height="80"/>
+                    <RowDefinition Height="80"/>
+                    <RowDefinition Height="80"/>
                     <RowDefinition Height="60"/>
-                    <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="70"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Label Grid.Row="0" Content="Font" Margin="5" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <Label Grid.Row="1" Content="Size" Margin="5" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <Label Grid.Row="3" Content="Color" Margin="5" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <Label Grid.Row="0" Content="Font" Margin="5" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <Label Grid.Row="1" Content="Size" Margin="5" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <Label Grid.Row="2" Grid.RowSpan="2" Content="Color" Margin="5" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 
                 <StackPanel Grid.Column="2" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                    <Button Width="60" Height="60" Margin="10" Content="돋움" Padding="0" Click="Font_Family_Change_Btn_Click" FontFamily="돋움" FontWeight="Bold" FontSize="20"/>
-                    <Button Width="60" Height="60" Margin="10" Content="바탕" Padding="0" Click="Font_Family_Change_Btn_Click" FontFamily="바탕" FontWeight="Bold" FontSize="20"/>
-                    <Button Width="60" Height="60" Margin="10" Content="고딕" Padding="0" Click="Font_Family_Change_Btn_Click" FontFamily="고딕" FontWeight="Bold" FontSize="20"/>
-                    <Button Width="60" Height="60" Margin="10" Content="궁서" Padding="0" Click="Font_Family_Change_Btn_Click" FontFamily="궁서" FontWeight="Bold" FontSize="20"/>
-                    <Button Width="60" Height="60" Margin="10" Content="휴먼&#10;고딕" Padding="0" Click="Font_Family_Change_Btn_Click" FontFamily="휴먼고딕" FontWeight="Bold" FontSize="20"/>
+                    <Button x:Name="f1" Width="60" Height="60" Tag="1" Margin="10" Background="LightCoral" Content="돋움" Padding="0" Click="Font_Family_Change_Btn_Click" FontFamily="돋움" FontWeight="Bold" FontSize="20"/>
+                    <Button x:Name="f2" Width="60" Height="60" Tag="2" Margin="10" Background="LightGray" Content="바탕" Padding="0" Click="Font_Family_Change_Btn_Click" FontFamily="바탕" FontWeight="Bold" FontSize="20"/>
+                    <Button x:Name="f3" Width="60" Height="60" Tag="3" Margin="10" Background="LightGray" Content="고딕" Padding="0" Click="Font_Family_Change_Btn_Click" FontFamily="고딕" FontWeight="Bold" FontSize="20"/>
+                    <Button x:Name="f4" Width="60" Height="60" Tag="4" Margin="10" Background="LightGray" Content="궁서" Padding="0" Click="Font_Family_Change_Btn_Click" FontFamily="궁서" FontWeight="Bold" FontSize="20"/>
+                    <Button x:Name="f5" Width="60" Height="60" Tag="5" Margin="10" Background="LightGray" Content="굴림" Padding="0" Click="Font_Family_Change_Btn_Click" FontFamily="굴림" FontWeight="Bold" FontSize="20"/>
+                    <Button x:Name="f6" Width="60" Height="60" Tag="6" Margin="10" Background="LightGray" Content="휴먼&#10;고딕" Padding="0" Click="Font_Family_Change_Btn_Click" FontFamily="휴먼고딕" FontWeight="Bold" FontSize="20"/>
                 </StackPanel>
                 <StackPanel Grid.Column="2" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                    <Button x:Name="fsize_1" Tag="1" Background="LightGray" Width="60" Height="60" Margin="10" Content="1aA" FontSize="10" Padding="3" Click="Size_Change_Btn_Click"/>
+                    <Button x:Name="fsize_1" Tag="1" Background="LightCoral" Width="60" Height="60" Margin="10" Content="1aA" FontSize="10" Padding="3" Click="Size_Change_Btn_Click"/>
                     <Button x:Name="fsize_2" Tag="2" Background="LightGray" Width="60" Height="60" Margin="10" Content="1aA" FontSize="12" Padding="3" Click="Size_Change_Btn_Click"/>
                     <Button x:Name="fsize_3" Tag="3" Background="LightGray" Width="60" Height="60" Margin="10" Content="1aA" FontSize="15" Padding="3" Click="Size_Change_Btn_Click"/>
                     <Button x:Name="fsize_4" Tag="4" Background="LightGray" Width="60" Height="60" Margin="10" Content="1aA" FontSize="19" Padding="3" Click="Size_Change_Btn_Click"/>
                     <Button x:Name="fsize_5" Tag="5" Background="LightGray" Width="60" Height="60" Margin="10" Content="1aA" FontSize="24" Padding="3" Click="Size_Change_Btn_Click"/>
+                    <Button x:Name="fsize_6" Tag="6" Background="LightGray" Width="60" Height="60" Margin="10" Content="1aA" FontSize="30" Padding="3" Click="Size_Change_Btn_Click"/>
                 </StackPanel>
                 
-                <TextBox  Grid.Column="2" Grid.Row="2" Margin="10" Background="White" Width="350" Height="50" HorizontalAlignment="Left" VerticalAlignment="Center" TextChanged="TextBox_TextChanged"
-                          FontSize="20" VerticalContentAlignment="Center"/>
                 
-                <StackPanel Grid.Column="2" Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <StackPanel Grid.Column="2" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
                     <Button Width="60" Height="60" Margin="10" Background="Red" Click="Color_Change_Btn_Click"/>
                     <Button Width="60" Height="60" Margin="10" Background="Orange" Click="Color_Change_Btn_Click"/>
                     <Button Width="60" Height="60" Margin="10" Background="Yellow" Click="Color_Change_Btn_Click"/>
                     <Button Width="60" Height="60" Margin="10" Background="LightGreen" Click="Color_Change_Btn_Click"/>
                     <Button Width="60" Height="60" Margin="10" Background="DarkGreen" Click="Color_Change_Btn_Click"/>
+                    <Button Width="60" Height="60" Margin="10" Background="White" Click="Color_Change_Btn_Click"/>
 
                 </StackPanel>
-                <StackPanel Grid.Column="2" Grid.Row="4" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <StackPanel Grid.Column="2" Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
                     <Button Width="60" Height="60" Margin="10" Background="Cyan" Click="Color_Change_Btn_Click"/>
                     <Button Width="60" Height="60" Margin="10" Background="Blue" Click="Color_Change_Btn_Click"/>
                     <Button Width="60" Height="60" Margin="10" Background="DarkBlue" Click="Color_Change_Btn_Click"/>
                     <Button Width="60" Height="60" Margin="10" Background="Purple" Click="Color_Change_Btn_Click"/>
                     <Button Width="60" Height="60" Margin="10" Background="Gray" Click="Color_Change_Btn_Click"/>
+                    <Button Width="60" Height="60" Margin="10" Background="Black" Click="Color_Change_Btn_Click"/>
                 </StackPanel>
+                <StackPanel Grid.Column="2" Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                    <TextBox Margin="5" Background="#EFEFEF" Width="380" Height="40" HorizontalAlignment="Left" VerticalAlignment="Center" TextChanged="TextBox_TextChanged"
+                          FontSize="20" VerticalContentAlignment="Center"/>
+                    <Button Content="{materialDesign:PackIcon Kind=Plus}" Margin="2" Padding="10" />
+                    <Button Content="{materialDesign:PackIcon Kind=PreviousTitle}" Margin="2" Padding="10"/>
+                    <Button Content="{materialDesign:PackIcon Kind=NextTitle}" Margin="2" Padding="10"/>
+                </StackPanel>
+                <Grid Grid.Column="2" Grid.Row="5">
+                    <ListView  d:ItemsSource="{d:SampleData ItemCount=5}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Width="480">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="30"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Background="#9F9F9F" CornerRadius="2" Margin="1">
+                                        <TextBlock/>
+                                    </Border>
+
+                                    <Button Grid.Column="1" Content="{materialDesign:PackIcon Kind=TrashCan}" Padding="0"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
             </Grid>
             
         </Grid>
 
         <Grid Grid.Row="2" Grid.Column="1" Background="#3F3F3F" x:Name="Chroma_Grid_" IsEnabled="False">
-            <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="10">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Label Content="Chroma Key" Background="Transparent" Foreground="White" VerticalContentAlignment="Center" FontSize="20" HorizontalAlignment="Center"/>
+
+            <StackPanel Grid.Row="1" Orientation="Vertical" VerticalAlignment="Top" Margin="10">
                 <Label Content="Source"/>
                 <hc:ComboBox x:Name="chroma_key_combo" SelectionChanged="chroma_key_combo_SelectionChanged"/>
                 <Grid>
@@ -449,14 +482,21 @@
                 </Grid>
                 <Slider x:Name="liftslider" ValueChanged="Chroma_Lift_ValueChanged" Maximum="1" LargeChange="0.1" SmallChange="0.01"/>
 
-                <UniformGrid Rows="1" Margin="0 10 0 10">
-                    <Button Background="Magenta" Tag ="1" Width="100" Height="50" Click="chroma_value_Auto_change"/>
+                <Border CornerRadius="30" Background="#2f2f2f" Margin="10">
+                    <Grid>
+                        <StackPanel Orientation="Vertical">
+                            <Label Content="대표색상" Margin="0 10 0 0" HorizontalAlignment="Center" FontSize="15"/>
+                            <UniformGrid Rows="1" Margin="10">
+                                <Button Background="Magenta" Content="#FF09E2" Tag ="1" Width="100" Height="50" Click="chroma_value_Auto_change"/>
 
-                    <Button Background="Green" Tag ="2" Width="100" Height="50" Click="chroma_value_Auto_change"/>
+                                <Button Background="Green" Content="#00B050" Tag ="2" Width="100" Height="50" Click="chroma_value_Auto_change"/>
 
-                    <Button Background="Cyan" Tag ="3" Width="100" Height="50" Click="chroma_value_Auto_change"/>
-                </UniformGrid>
+                                <Button Background="Cyan" Content="00FFFF"  Tag ="3" Width="100" Height="50" Click="chroma_value_Auto_change"/>
+                            </UniformGrid>
+                        </StackPanel>
 
+                    </Grid>
+                </Border>
                 <TextBlock Foreground="White" FontSize="12" Text="*간단 사용법*"/>
                 <TextBlock Foreground="White" FontSize="12"
                          Text="1. *대표색상* 버튼을 이용하면, 적절한 값으로 자동 설정됩니다."/>
@@ -466,7 +506,8 @@
                          Text="3. onAir 버튼은 크로마키 기능을 켜고 끌 수 있는 버튼입니다."/>
                 <TextBlock Foreground="White" FontSize="12"
                          Text="4. Play 버튼은 크로마키 미리보기 값을 실제로 적용하는 버튼입니다."/>
-
+                <TextBlock Foreground="White" FontSize="12"
+                         Text="5. "/>
 
             </StackPanel>
             
